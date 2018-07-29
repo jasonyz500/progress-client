@@ -29,6 +29,7 @@
     "moment": "^2.22.2",
     "query-string": "^6.1.0",
     "react": "^16.4.0",
+    "react-bootstrap": "^0.32.1",
     "react-datepicker": "^1.5.0",
     "react-dom": "^16.4.0",
     "react-redux": "^5.0.7",

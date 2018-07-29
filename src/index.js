@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 import promise from 'redux-promise';
 
 import reducers from './reducers';
+import 'gestalt/dist/gestalt.css';
 
 import App from './components/App';
 import registerServiceWorker from './registerServiceWorker';
