@@ -9,7 +9,7 @@ const Main = () => (
   <main>
     <Switch>
       <Route exact path='/' component={Weekly}/>
-      <Route path='/weekly' component={Weekly}/>
+      <Route path='/weekly/:weekStr?' component={Weekly}/>
       <Route path='/monthly' component={Monthly}/>
       <Route path='/yearly' component={Yearly}/>
       <Route path='/login' component={Login}/>

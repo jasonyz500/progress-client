@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Box, Divider, Heading, Icon, IconButton, Text } from 'gestalt';
 import { dayNamesMap, moodToColorMap } from '../constants';
+import moment from 'moment';
 
 const fakeData = {
   title: "July 16-20 (Q3 Week 3)",
@@ -89,6 +91,30 @@ class Weekly extends Component {
   constructor(props) {
     super(props);
     this.state = fakeData;
+    const weekStr = props.match.params.weekStr || moment().startOf('isoWeek').format('YYYY-MM-DD');
+    this.state.weekStr = weekStr;
+  }
+
+  componentDidMount() {
+    this.fetchData();
+  }
+
+  handlePreviousWeek() {
+    const { weekStr } = this.state;
+    const previousWeekStr = moment(weekStr).subtract(7, 'days').format('YYYY-MM-DD');
+    this.props.history.push(`/weekly/${previousWeekStr}`);
+    this.setState({ ...this.state, weekStr: previousWeekStr });
+  }
+
+  handleNextWeek() {
+    const { weekStr } = this.state;
+    const nextWeekStr = moment(weekStr).add(7, 'days').format('YYYY-MM-DD');
+    this.props.history.push(`/weekly/${nextWeekStr}`);
+    this.setState({ ...this.state, weekStr: nextWeekStr });
+  }
+
+  fetchData() {
+
   }
 
   drawDay(name, data) {
@@ -125,11 +151,13 @@ class Weekly extends Component {
           <IconButton
             accessibilityLabel="Previous Week"
             icon="arrow-back"
+            onClick={this.handlePreviousWeek.bind(this)}
           />
           <Heading size="xs">{data.title}</Heading>
           <IconButton
             accessibilityLabel="Next Week"
             icon="arrow-forward"
+            onClick={this.handleNextWeek.bind(this)}
           />
         </Box>
         {data.days.map((day, i) => (
@@ -140,4 +168,8 @@ class Weekly extends Component {
   }
 }
 
-export default Weekly;
+function mapStateToProps(state, ownProps) {
+  return state;
+}
+
+export default connect(mapStateToProps)(Weekly);
