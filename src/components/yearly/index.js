@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Box, Column, Heading, Icon, Label, Switch, Text } from 'gestalt';
+import { Box, Column, Heading, Text } from 'gestalt';
 import _ from 'lodash';
 
 const fakeData = {

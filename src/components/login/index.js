@@ -1,51 +1,65 @@
 import React, { Component } from 'react';
-import { Field, reduxForm } from 'redux-form';
-import { Button } from 'gestalt';
+import { withRouter } from 'react-router-dom'
+import { Button, FormControl, FormGroup } from 'react-bootstrap';
 import AuthService from '../auth-service';
 
 const authService = new AuthService();
 
 class Login extends Component {
+  constructor(props, context) {
+    super(props, context);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleLogin = this.handleLogin.bind(this);
+    this.state = {
+      email: '',
+      password: ''
+    };
+  }
+
   componentWillMount(){
     if (authService.isLoggedIn()) {
       this.props.history.replace('/');
     }
   }
 
+  async handleLogin() {
+    const { email, password } = this.state;
+    const res = await authService.login(email, password);
+    if(res) {
+      this.props.history.replace('/');
+    } else {
+      this.setState({ error: 'Invalid Credentials. Please try again.' });
+    }
+  }
+
+  handleChange(e) {
+    this.setState({ [e.target.id]: e.target.value });
+  }
+
   render() {
-    const { handleSubmit } = this.props;
     return (
-      <div className="form">
-        <div className="container">
-          <h2>Sign In</h2>
-          <form onSubmit={ handleSubmit(this.submit) }>
-            <Field name="email"
-                  component="input"
-                  type="text"
-                  placeholder="Email" 
+      <div>
+        <h2>Please log in to continue.</h2>
+        <form>
+          <FormGroup>
+            <FormControl
+              id="email"
+              type="text"
+              placeholder="Email"
+              onChange={this.handleChange}
             />
-            <Field name="password" 
-                  component="input"
-                  type="password" 
-                  placeholder="Password" 
+            <FormControl
+              id="password"
+              type="password"
+              placeholder="Password"
+              onChange={this.handleChange} 
             />
-            <Button text="Sign in"/>
-          </form>
-        </div>
+            <Button onClick={this.handleLogin}>Log In</Button>
+          </FormGroup>
+        </form>
       </div>
     );
   }
-
-  async submit (values) {
-    const res = await authService.login(values.email, values.password);
-    if (res) {
-      window.location.reload();
-    } else {
-      this.setState({ error: true });
-    }
-  }
 }
 
-export default reduxForm({
-  form: 'login'
-})(Login);
+export default withRouter(Login);

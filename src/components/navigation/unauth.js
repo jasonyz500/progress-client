@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom'
 import { Button, FormControl, FormGroup, Navbar } from 'react-bootstrap';
 import AuthService from '../auth-service';
-// import './navigation.css';
 
 const authService = new AuthService();
 
