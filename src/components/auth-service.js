@@ -33,8 +33,7 @@ export default class AuthService {
   isLoggedIn() {
     try {
       const expiresAt = JSON.parse(localStorage.getItem('expires_at')) * 1000;
-      // return new Date().getTime() < expiresAt;
-      return true;
+      return new Date().getTime() < expiresAt;
     } catch (error) {
       return false;
     }

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { Button } from 'gestalt';
 import AuthService from '../auth-service';
-import './login.css';
 
 const authService = new AuthService();
 

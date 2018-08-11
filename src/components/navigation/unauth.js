@@ -1,14 +1,34 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom'
-import { Button, FormControl, FormGroup, Navbar, Nav, NavItem } from 'react-bootstrap';
+import { Link, withRouter } from 'react-router-dom'
+import { Button, FormControl, FormGroup, Navbar } from 'react-bootstrap';
 import AuthService from '../auth-service';
 // import './navigation.css';
 
 const authService = new AuthService();
 
-export class UnauthNavigation extends Component {
-  handleLogin() {
-    alert('login');
+class UnauthNavigation extends Component {
+  constructor(props, context) {
+    super(props, context);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleLogin = this.handleLogin.bind(this);
+    this.state = {
+      email: '',
+      password: ''
+    };
+  }
+
+  async handleLogin() {
+    const { email, password } = this.state;
+    const res = await authService.login(email, password);
+    if(res) {
+      this.props.history.replace('/');
+    } else {
+      this.props.history.replace('/login');
+    }
+  }
+
+  handleChange(e) {
+    this.setState({ [e.target.id]: e.target.value });
   }
 
   render() {
@@ -21,12 +41,24 @@ export class UnauthNavigation extends Component {
         </Navbar.Header>
         <Navbar.Form pullRight>
           <FormGroup>
-            <FormControl type="text" placeholder="Email" />
-            <FormControl type="password" placeholder="Password" />
-            <Button type="submit">Log In</Button>
+            <FormControl
+              id="email"
+              type="text"
+              placeholder="Email"
+              onChange={this.handleChange}
+            />
+            <FormControl
+              id="password"
+              type="password"
+              placeholder="Password"
+              onChange={this.handleChange} 
+            />
+            <Button type="submit" onClick={this.handleLogin}>Log In</Button>
           </FormGroup>
         </Navbar.Form>
       </Navbar>
     );
   }
 }
+
+export default withRouter(UnauthNavigation);

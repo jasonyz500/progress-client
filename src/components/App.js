@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Container } from 'gestalt';
-import { Navigation, UnauthNavigation } from './navigation';
+import { Navigation } from './navigation/auth';
+import UnauthNavigation from './navigation/unauth';
 import Main from './main';
 import AuthService from './auth-service';
 
