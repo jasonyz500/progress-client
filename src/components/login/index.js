@@ -11,8 +11,8 @@ class Login extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
     this.state = {
-      email: '',
-      password: ''
+      email_main: '',
+      password_main: ''
     };
   }
 
@@ -23,10 +23,11 @@ class Login extends Component {
   }
 
   async handleLogin() {
-    const { email, password } = this.state;
+    const email = this.state.email_main;
+    const password = this.state.password_main;
     const res = await authService.login(email, password);
     if(res) {
-      this.props.history.replace('/');
+      this.props.history.replace(this.props.location.pathname);
     } else {
       this.setState({ error: 'Invalid Credentials. Please try again.' });
     }
@@ -43,13 +44,13 @@ class Login extends Component {
         <form>
           <FormGroup>
             <FormControl
-              id="email"
+              id="email_main"
               type="text"
               placeholder="Email"
               onChange={this.handleChange}
             />
             <FormControl
-              id="password"
+              id="password_main"
               type="password"
               placeholder="Password"
               onChange={this.handleChange} 
