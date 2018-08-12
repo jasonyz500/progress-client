@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Box, Divider, Heading, Icon, IconButton, Text } from 'gestalt';
-import { dayNamesMap, moodToColorMap } from '../constants';
 import moment from 'moment';
+import { fetchEntriesDaily } from '../../actions/';
+import { dayNamesMap, moodToColorMap } from '../constants';
 
 const fakeData = {
   title: "July 16-20 (Q3 Week 3)",
@@ -91,30 +92,39 @@ class Weekly extends Component {
   constructor(props) {
     super(props);
     this.state = fakeData;
-    const weekStr = props.match.params.weekStr || moment().startOf('isoWeek').format('YYYY-MM-DD');
-    this.state.weekStr = weekStr;
   }
 
   componentDidMount() {
-    this.fetchData();
+    const weekStr = this.props.match.params.weekStr || moment().startOf('isoWeek').format('YYYY-MM-DD');
+
+    this.setNewWeekState(weekStr);
   }
 
   handlePreviousWeek() {
     const { weekStr } = this.state;
     const previousWeekStr = moment(weekStr).subtract(7, 'days').format('YYYY-MM-DD');
     this.props.history.push(`/weekly/${previousWeekStr}`);
-    this.setState({ ...this.state, weekStr: previousWeekStr });
+    this.setNewWeekState(previousWeekStr);
   }
 
   handleNextWeek() {
     const { weekStr } = this.state;
     const nextWeekStr = moment(weekStr).add(7, 'days').format('YYYY-MM-DD');
     this.props.history.push(`/weekly/${nextWeekStr}`);
-    this.setState({ ...this.state, weekStr: nextWeekStr });
+    this.setNewWeekState(nextWeekStr);
+  }
+
+  setNewWeekState(weekStr) {
+    const weekStrEnd = moment(weekStr).add(5, 'days').format('YYYY-MM-DD');
+    const newState = this.state;
+    newState.weekStr = weekStr;
+    newState.weekStrEnd = weekStrEnd;
+    this.setState(newState);
+    this.fetchData();
   }
 
   fetchData() {
-
+    this.props.fetchEntriesDaily(this.state.weekStr, this.state.weekStrEnd);
   }
 
   drawDay(name, data) {
@@ -169,7 +179,8 @@ class Weekly extends Component {
 }
 
 function mapStateToProps(state, ownProps) {
-  return state;
+  // ideally will only strip off the required entries for this week
+  return state.daily_entries;
 }
 
-export default connect(mapStateToProps)(Weekly);
+export default connect(mapStateToProps, { fetchEntriesDaily })(Weekly);
