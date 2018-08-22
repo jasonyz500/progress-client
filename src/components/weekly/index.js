@@ -96,7 +96,6 @@ class Weekly extends Component {
 
   componentDidMount() {
     const weekStr = this.props.match.params.weekStr || moment().startOf('isoWeek').format('YYYY-MM-DD');
-
     this.setNewWeekState(weekStr);
   }
 
@@ -117,6 +116,7 @@ class Weekly extends Component {
   setNewWeekState(weekStr) {
     const weekStrEnd = moment(weekStr).add(5, 'days').format('YYYY-MM-DD');
     const newState = this.state;
+    // figure out shorthand for this later
     newState.weekStr = weekStr;
     newState.weekStrEnd = weekStrEnd;
     this.setState(newState);
