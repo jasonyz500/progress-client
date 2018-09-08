@@ -9,7 +9,7 @@ class DayBox extends Component {
     if(!data) {
       return (
         <Box>
-          <Text>No data for today</Text>  
+          <Text>Click the pencil to add some data!</Text>  
         </Box>
       );
     }
@@ -49,11 +49,21 @@ class DayBox extends Component {
     }
     return (
       <Box color="lightGray" padding={1} margin={1} key={date}>
-        <Box color={data ? moodToColorMap[data.mood_score]: moodToColorMap[0]} padding={2}>
-          <Text bold={true} size="lg">{moment(date).format('dddd, MMMM Do')}</Text>
+        <Box 
+          display="flex"
+          direction="row"
+          alignItems="center"
+          color={data ? moodToColorMap[data.mood_score]: moodToColorMap[0]}
+          padding={2}
+        >
+          <Box flex="grow">
+            <Text bold={true} size="lg">{moment(date).format('dddd, MMMM Do')}</Text>
+          </Box>
           <IconButton
             accessibilityLabel="Edit"
             icon="edit"
+            iconColor="white"
+            size="sm"
           />
         </Box>
         <Box color="white" padding={2}>
