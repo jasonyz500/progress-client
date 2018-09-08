@@ -41,7 +41,9 @@ export default function(state = {}, action) {
       for (let key in res) {
         res[key].updates = _.values(res[key].updates);
       }
-      return _.assign(state, res);
+      // need to create a deep clone because _.assign mutates state
+      // mutating state prevents components from auto-rerendering
+      return _.assign(_.cloneDeep(state), res);
     default:
       return state;
   }

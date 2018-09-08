@@ -3,95 +3,12 @@ import { connect } from 'react-redux';
 import { Box, Divider, Heading, Icon, IconButton, Text } from 'gestalt';
 import moment from 'moment';
 import { fetchEntriesDaily } from '../../actions/';
-import { dayNamesMap, moodToColorMap } from '../constants';
-
-const fakeData = {
-  title: "July 16-20 (Q3 Week 3)",
-  days: [
-    {
-      mood: {
-        score: 5,
-        reason: "Able to spend the day diving deep into my project and cranking out lots of code."
-      },
-      entries: [
-        {
-          headline: "Continue investigating safe_frontend_event for closeup impression validation.",
-          tags: ["Sideswipe validation"],
-          body: "datahub/presto slowness + down parts of the day"
-        },
-        {
-          headline: "Setup android env.",
-          tags: ["Android"],
-          body: "It was a pain"
-        }
-      ]
-    },
-    {
-      mood: {
-        score: 4,
-        reason: "I made some big progress on spark data pipelines."
-      },
-      entries: [
-        {
-          headline: "Created additional test runs for CPM automation",
-          body: ""
-        },
-        {
-          headline: "Focused on formatting MOAT automation tests & uploaded to TestRail project (~700 test cases)!"
-        }
-      ]
-    },
-    {
-      mood: {
-        score: 3,
-        reason: "Morning was pretty productive but I got blocked towards the end of the day."
-      },
-      entries: [
-        {
-          headline: "Landed all bulk pepsi and pinboard diffs",
-          body: ""
-        },
-        {
-          headline: "Setup android env",
-          body: "It was a pain"
-        }
-      ]
-    },
-    {
-      mood: {
-        score: 2,
-        reason: "Wasted 4 hours of my day debugging some legacy code that nobody knew anything about."
-      },
-      entries: [
-        {
-          headline: "Diff to remove admin mode access for carousel in ads manager",
-          body: "",
-          tags: ["Carousel", "Ads manager"]
-        },
-        {
-          headline: "Diff to update secondary review job to run daily instead of hourly"
-        }
-      ]
-    },
-    {
-      mood: {
-        score: 1,
-        reason: "It's so painful running long queries on datahub Presto, and sometimes it dies."
-      },
-      entries: [
-        {
-          headline: "Update the metro upload script to have metro results sorted so it's easier to see failures in groups/area in code",
-          tags: ["Automated testing"]
-        }
-      ]
-    }
-  ]
-};
+import { moodToColorMap } from '../constants';
 
 class Weekly extends Component {
   constructor(props) {
     super(props);
-    this.state = fakeData;
+    this.state = {};
   }
 
   componentDidMount() {
@@ -99,16 +16,18 @@ class Weekly extends Component {
     this.setNewWeekState(weekStr);
   }
 
+  // functions for changing weeks
   handlePreviousWeek() {
-    const { weekStr } = this.state;
-    const previousWeekStr = moment(weekStr).subtract(7, 'days').format('YYYY-MM-DD');
-    this.props.history.push(`/weekly/${previousWeekStr}`);
-    this.setNewWeekState(previousWeekStr);
+    this.handleChangeWeek(-7);
   }
 
   handleNextWeek() {
+    this.handleChangeWeek(7);
+  }
+
+  handleChangeWeek(diff) {
     const { weekStr } = this.state;
-    const nextWeekStr = moment(weekStr).add(7, 'days').format('YYYY-MM-DD');
+    const nextWeekStr = moment(weekStr).add(diff, 'days').format('YYYY-MM-DD');
     this.props.history.push(`/weekly/${nextWeekStr}`);
     this.setNewWeekState(nextWeekStr);
   }
@@ -127,34 +46,55 @@ class Weekly extends Component {
     this.props.fetchEntriesDaily(this.state.weekStr, this.state.weekStrEnd);
   }
 
-  drawDay(name, data) {
+  // functions for rendering
+  getDisplayTitle() {
+    const { weekStr, weekStrEnd } = this.state;
+    const start = moment(weekStr);
+    const end = moment(weekStrEnd);
+    const firstHalf = start.format('MMMM D');
+    const secondHalf = start.month() === end.month() ? end.format('D') : end.format('MMMM D');
+    return `${firstHalf} - ${secondHalf} (Week ${start.format('W')})`
+  }
+
+  drawDay(date, data) {
+    if(!data) {
+      return;
+    }
     return (
-      <Box color="lightGray" padding={1} margin={1} key={name}>
-        <Box color={moodToColorMap[data.mood.score]} padding={2}>
-          <Text bold={true} size="lg">{name}</Text>
+      <Box color="lightGray" padding={1} margin={1} key={date}>
+        <Box color={moodToColorMap[data.mood_score]} padding={2}>
+          <Text bold={true} size="lg">{moment(date).format('dddd, MMMM Do')}</Text>
         </Box>
         <Box color="white" padding={2}>
           <Box display="flex" direction="row">
-            {Array(data.mood.score).fill().map((_, i) => (
+            {Array(data.mood_score).fill().map((_, i) => (
               <Icon key={i} accessibilityLabel="rank" icon="smiley-outline" color="red" />
             ))}
           </Box>
-          <Text>{data.mood.reason}</Text>
+          <Text>{data.mood_reason}</Text>
           <br />
           <Divider />
           <br />
           <Text bold={true}>Project Updates</Text>
           <br />
-          {data.entries.map((entry, i) => (
-            <Text key={i} align="left">- {entry.headline} {entry.tags && entry.tags.length ? `[${entry.tags.join(', ')}]` : "[No tags]"}</Text>
+          {data.updates.map((update, i) => (
+            <Text key={i} align="left">- {update.body} {this.drawTags(update.tags)}</Text>
           ))}
         </Box>
       </Box>
     );
   }
 
+  drawTags(tags) {
+    if(!tags || !tags.length) {
+      return '[No Tags]';
+    }
+    return `[${tags.map(tag => (tag.tag)).join(', ')}]`;
+  }
+
   render() {
-    const data = this.state;
+    const { weekStrEnd } = this.state;
+    const days = [...Array(5).keys()].map(i => ( moment(weekStrEnd).subtract(i, 'days').format('YYYY-MM-DD')) );
     return (
       <Box>
         <Box marginTop={2} display="flex" direction="row" alignItems="center" alignContent="center">
@@ -163,24 +103,24 @@ class Weekly extends Component {
             icon="arrow-back"
             onClick={this.handlePreviousWeek.bind(this)}
           />
-          <Heading size="xs">{data.title}</Heading>
+          <Heading size="xs">{this.getDisplayTitle()}</Heading>
           <IconButton
             accessibilityLabel="Next Week"
             icon="arrow-forward"
             onClick={this.handleNextWeek.bind(this)}
           />
         </Box>
-        {data.days.map((day, i) => (
-          this.drawDay(dayNamesMap[i], day)
+        {days.map(day => (
+          this.drawDay(day, this.props.daily_entries[day])
         ))}
       </Box>
     );
   }
 }
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps({ daily_entries }) {
   // ideally will only strip off the required entries for this week
-  return state.daily_entries;
+  return { daily_entries };
 }
 
 export default connect(mapStateToProps, { fetchEntriesDaily })(Weekly);
