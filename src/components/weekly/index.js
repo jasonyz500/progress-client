@@ -77,8 +77,8 @@ class Weekly extends Component {
         {days.map(day => (
           <DayBox
             key={day}
-            date={day}
-            data={this.props.daily_entries[day]}
+            dateStr={day}
+            entry={this.props.daily_entries[day]}
           />
         ))}
       </Box>

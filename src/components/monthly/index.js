@@ -135,7 +135,7 @@ class Monthly extends Component {
             }
           </Box>
           <Box color="white" padding={2} height={100} dangerouslySetInlineStyle={{
-            __style: { 'border-left': '1px solid lightgray', 'border-right': '1px solid lightgray', 'border-bottom': '1px solid lightgray' }
+            __style: { 'borderLeft': '1px solid lightgray', 'borderRight': '1px solid lightgray', 'borderBottom': '1px solid lightgray' }
           }}>
             <Text bold={true}>Weekly Project Updates</Text>
             {_.map(week.entries, entry => (
