@@ -13,7 +13,10 @@ class DayBox extends Component {
       showModal: false,
       dateStr: props.dateStr
     };
+    this.handleMoodSelect.bind(this);
   }
+
+  /* FUNCTIONS FOR PARENT DATE BOX */
 
   drawEntryContent(entry) {
     if(_.isEmpty(entry)) {
@@ -50,15 +53,30 @@ class DayBox extends Component {
     return `[${tags.map(tag => (tag.tag)).join(', ')}]`;
   }
 
+  /* END FUNCTIONS FOR PARENT DATE BOX */
+  /* FUNCTIONS FOR MODAL */
+
   toggleModal() {
-    this.setState(prevState => ({ showModal: !prevState.showModal }));
+    this.setState(prevState => ({ 
+      showModal: !prevState.showModal,
+      modalEntry: _.cloneDeep(this.props.entry)
+    }));
+  }
+
+  handleMoodSelect(mood) {
+    const { modalEntry } = this.state;
+    modalEntry.mood_score = mood;
+    this.setState(prevState => ({ modalEntry: modalEntry }));
   }
 
   handleSave() {
 
   }
 
-  drawEditModal(dateStr, entry) {
+  /* END FUNCTIONS FOR MODAL */
+
+  drawEditModal() {
+    const { dateStr, modalEntry } = this.state;
     return (
       <Modal
         accessibilityCloseLabel="close"
@@ -95,7 +113,8 @@ class DayBox extends Component {
                       key={i}
                       accessibilityLabel={`Select ${i+1} Stars`}
                       icon="smiley-outline"
-                      iconColor={entry && entry.mood_score > i ? 'red' : 'gray'}
+                      iconColor={modalEntry && modalEntry.mood_score > i ? 'red' : 'gray'}
+                      onClick={() => this.handleMoodSelect(i+1)}
                     />
                   ))
                 }
@@ -109,7 +128,7 @@ class DayBox extends Component {
                 </Label>
               </Column>
               <Column span={8}>
-                <TextField id="mood_reason" onChange={() => undefined} value={entry.mood_reason}/>
+                <TextField id="mood_reason" onChange={() => undefined} value={modalEntry.mood_reason}/>
               </Column>
             </Box>
             <Divider />
@@ -166,7 +185,7 @@ class DayBox extends Component {
         <Box color="white" padding={2}>
           {this.drawEntryContent(entry)}
         </Box>
-        {this.state.showModal && this.drawEditModal(dateStr, entry)}
+        {this.state.showModal && this.drawEditModal()}
       </Box>
     );
 	}
