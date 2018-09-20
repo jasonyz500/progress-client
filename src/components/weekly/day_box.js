@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Box, Button, Column, Divider, Heading, Icon, IconButton, Label, Modal, Text, TextField } from 'gestalt';
 import moment from 'moment';
+import _ from 'lodash';
 import { moodToColorMap } from '../constants';
 import { createEntry, updateEntry } from '../../actions/';
 
@@ -10,13 +11,12 @@ class DayBox extends Component {
     super(props);
     this.state = {
       showModal: false,
-      dateStr: props.dateStr,
-      entry: props.entry
+      dateStr: props.dateStr
     };
   }
 
   drawEntryContent(entry) {
-    if(!entry) {
+    if(_.isEmpty(entry)) {
       return (
         <Box>
           <Text>Click the pencil to add some data!</Text>  
@@ -172,5 +172,12 @@ class DayBox extends Component {
 	}
 }
 
-export default connect(null, { createEntry, updateEntry })(DayBox);
+function mapStateToProps({ daily_entries }, ownProps) {
+  const { dateStr } = ownProps;
+  return {
+    entry: daily_entries[dateStr] || {}
+  }
+}
+
+export default connect(mapStateToProps, { createEntry, updateEntry })(DayBox);
 

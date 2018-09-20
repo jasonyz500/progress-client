@@ -78,7 +78,6 @@ class Weekly extends Component {
           <DayBox
             key={day}
             dateStr={day}
-            entry={this.props.daily_entries[day]}
           />
         ))}
       </Box>
@@ -86,9 +85,4 @@ class Weekly extends Component {
   }
 }
 
-function mapStateToProps({ daily_entries }) {
-  // ideally will only strip off the required entries for this week
-  return { daily_entries };
-}
-
-export default connect(mapStateToProps, { fetchEntriesDaily })(Weekly);
+export default connect(null,{ fetchEntriesDaily })(Weekly);
