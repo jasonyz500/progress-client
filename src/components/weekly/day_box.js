@@ -11,7 +11,12 @@ class DayBox extends Component {
     super(props);
     this.state = {
       showModal: false,
-      dateStr: props.dateStr
+      dateStr: props.dateStr,
+      modalEntry: {
+        mood_score: 0,
+        mood_reason: '',
+        updates: []
+      }
     };
     this.handleMoodSelect.bind(this);
   }
@@ -19,13 +24,13 @@ class DayBox extends Component {
   /* FUNCTIONS FOR PARENT DATE BOX */
 
   drawEntryContent(entry) {
-    if(_.isEmpty(entry)) {
-      return (
-        <Box>
-          <Text>Click the pencil to add some data!</Text>  
-        </Box>
-      );
-    }
+    // if(_.isEmpty(entry)) {
+    //   return (
+    //     <Box>
+    //       <Text>Click the pencil to add some data!</Text>  
+    //     </Box>
+    //   );
+    // }
     return (
       <Box>
         <Box display="flex" direction="row">
@@ -69,6 +74,72 @@ class DayBox extends Component {
     this.setState(prevState => ({ modalEntry: modalEntry }));
   }
 
+  handleMoodReason({ value }) {
+    const { modalEntry } = this.state;
+    modalEntry.mood_reason = value;
+    this.setState(prevState => ({ modalEntry: modalEntry }));
+  }
+
+  drawUpdate(update, idx) {
+    return (
+      <Box key={idx}>
+        <Box paddingY={2} paddingX={4} display="flex" alignItems="center">
+          <Column span={4}>
+            <Label htmlFor={`update${idx}`}>
+              <Text align="left" bold>Update</Text>
+            </Label>
+          </Column>
+          <Column span={8}>
+            <TextField 
+              id={`update${idx}`}
+              value={this.state.modalEntry.updates[idx].body}
+              onChange={(e) => this.handleChangeUpdate(e.value, idx)}
+            />
+          </Column>
+        </Box>
+        <Box paddingY={2} paddingX={4} display="flex" alignItems="center">
+          <Column span={4}>
+            <Label htmlFor={`labels${idx}`}>
+              <Text align="left" bold>Labels</Text>
+            </Label>
+          </Column>
+          <Column span={8}>
+          </Column>
+        </Box>
+        <Box display="flex" direction="row" justifyContent="end" right>
+          <IconButton
+            accessibilityLabel="Delete"
+            icon="remove"
+            iconColor="red"
+            onClick={() => this.removeUpdate(idx)}
+          />
+        </Box>
+        <Divider />
+      </Box>
+    );
+  }
+
+  addUpdate() {
+    const { modalEntry } = this.state;
+    modalEntry.updates.push({
+      body: '',
+      tags: []
+    });
+    this.setState(prevState => ({ modalEntry: modalEntry }));
+  }
+
+  removeUpdate(idx) {
+    const { modalEntry } = this.state;
+    modalEntry.updates = _.slice(modalEntry.updates, 0, idx).concat(_.drop(modalEntry.updates, idx+1))
+    this.setState(prevState => ({ modalEntry: modalEntry })); 
+  }
+
+  handleChangeUpdate(body, idx) {
+    const { modalEntry } = this.state;
+    modalEntry.updates[idx].body = body;
+    this.setState(prevState => ({ modalEntry: modalEntry }));
+  }
+
   handleSave() {
 
   }
@@ -97,9 +168,9 @@ class DayBox extends Component {
           </Box>
         }
       >
-        <Box display="flex" direction="row" position="relative" alignContent="center">
+        <Box display="flex" direction="row" position="relative" alignItems="center">
           <Column span={12}>
-            <Box paddingY={2} paddingX={4} display="flex">
+            <Box paddingY={2} paddingX={4} display="flex" alignItems="center">
               <Column span={4}>
                 <Label htmlFor="mood_score">
                   <Text align="left" bold>Mood Score</Text>
@@ -121,33 +192,32 @@ class DayBox extends Component {
                 </Box>
               </Column>
             </Box>
-            <Box paddingY={2} paddingX={4} display="flex">
+            <Box paddingY={2} paddingX={4} display="flex" alignItems="center">
               <Column span={4}>
                 <Label htmlFor="mood_reason">
                   <Text align="left" bold>Mood Reason</Text>
                 </Label>
               </Column>
               <Column span={8}>
-                <TextField id="mood_reason" onChange={() => undefined} value={modalEntry.mood_reason}/>
+                <TextField
+                  id="mood_reason"
+                  onChange={this.handleMoodReason.bind(this)}
+                  value={modalEntry.mood_reason}
+                  placeholder="Describe your mood"
+                />
               </Column>
             </Box>
             <Divider />
-            <Heading size="xs">Updates</Heading>
             <Box paddingY={2} paddingX={4} display="flex">
-              <Column span={4}>
-                <Label htmlFor="update">
-                  <Text align="left" bold>Update</Text>
-                </Label>
-              </Column>
-              <Column span={8}>
-                <TextField id="update" onChange={() => undefined} />
-              </Column>
-            </Box>                
+              <Heading size="xs">Project Updates</Heading>
+            </Box>
+            {_.map(modalEntry.updates, (update, i) => this.drawUpdate(update, i))}               
             <IconButton 
               accessibilityLabel="add an update"
               icon="add-circle"
               iconColor="red"
               size="xl"
+              onClick={this.addUpdate.bind(this)}
             />
           </Column>
         </Box>
@@ -157,7 +227,7 @@ class DayBox extends Component {
 
 	render() {
     const { dateStr, entry } = this.props;
-    if(moment().startOf('day') <= moment(dateStr)) {
+    if(moment().startOf('day') < moment(dateStr)) {
       return (
         <Box></Box>
       );
@@ -194,7 +264,11 @@ class DayBox extends Component {
 function mapStateToProps({ daily_entries }, ownProps) {
   const { dateStr } = ownProps;
   return {
-    entry: daily_entries[dateStr] || {}
+    entry: daily_entries[dateStr] || {
+      mood_score: 0,
+      mood_reason: '',
+      updates: []
+    }
   }
 }
 
