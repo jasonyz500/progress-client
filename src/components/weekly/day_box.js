@@ -99,8 +99,8 @@ class DayBox extends Component {
         </Box>
         <Box paddingY={2} paddingX={4} display="flex" alignItems="center">
           <Column span={4}>
-            <Label htmlFor={`labels${idx}`}>
-              <Text align="left" bold>Labels</Text>
+            <Label htmlFor={`tags${idx}`}>
+              <Text align="left" bold>Tags</Text>
             </Label>
           </Column>
           <Column span={8}>
@@ -211,8 +211,10 @@ class DayBox extends Component {
             <Box paddingY={2} paddingX={4} display="flex">
               <Heading size="xs">Project Updates</Heading>
             </Box>
-            {_.map(modalEntry.updates, (update, i) => this.drawUpdate(update, i))}               
-            <IconButton 
+            <Divider />
+            {_.map(modalEntry.updates, (update, i) => this.drawUpdate(update, i))}
+            <Label><Text align="left" bold>Add an Update</Text></Label>
+            <IconButton
               accessibilityLabel="add an update"
               icon="add-circle"
               iconColor="red"
