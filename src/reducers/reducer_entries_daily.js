@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { FETCH_ENTRIES_DAILY } from '../actions';
+import { FETCH_ENTRIES_DAILY, CREATE_ENTRY_DAILY, UPDATE_ENTRY_DAILY } from '../actions';
 
 export default function(state = {}, action) {
   switch (action.type) {
@@ -30,6 +30,7 @@ export default function(state = {}, action) {
         if (!_.has(res, row.date_string)) {
           res[row.date_string] = {
             id: row.entryid,
+            date_string: row.date_string, // redundant but useful
             mood_score: row.mood_score,
             mood_reason: row.mood_reason,
             updates: {}
@@ -44,6 +45,10 @@ export default function(state = {}, action) {
       // need to create a deep clone because _.assign mutates state
       // mutating state prevents components from auto-rerendering
       return _.assign(_.cloneDeep(state), res);
+    case CREATE_ENTRY_DAILY:
+    case UPDATE_ENTRY_DAILY:
+      // edit state to include new entry
+      return state;
     default:
       return state;
   }

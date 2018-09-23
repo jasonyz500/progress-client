@@ -37,7 +37,7 @@ export function fetchEntry(_id) {
 }
 
 export function createEntry(entry, callback) {
-  const request = axios.post(`${ROOT_URL}/entries/daily/new`, entry, getConfig()).then((resp) => callback(resp.data));
+  const request = axios.post(`${ROOT_URL}/entries/daily/new`, entry, getConfig()).then((resp) => callback());
 
   return {
     type: CREATE_ENTRY_DAILY,
@@ -46,7 +46,7 @@ export function createEntry(entry, callback) {
 }
 
 export function updateEntry(entry, callback) {
-  const request = axios.patch(`${ROOT_URL}/entries/daily/${entry._id}`, entry, getConfig()).then((resp) => callback());
+  const request = axios.patch(`${ROOT_URL}/entries/daily/${entry.id}`, entry, getConfig()).then((resp) => callback());
 
   return {
     type: UPDATE_ENTRY_DAILY,
@@ -54,8 +54,8 @@ export function updateEntry(entry, callback) {
   }
 }
 
-export function deleteEntry(_id, callback) {
-  const request = axios.delete(`${ROOT_URL}/entries/daily/${_id}`, getConfig()).then(() => callback());
+export function deleteEntry(id, callback) {
+  const request = axios.delete(`${ROOT_URL}/entries/daily/${id}`, getConfig()).then(() => callback());
 
   return {
     type: DELETE_ENTRY_DAILY,

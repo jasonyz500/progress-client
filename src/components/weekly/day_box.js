@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Box, Button, Column, Divider, Heading, Icon, IconButton, Label, Modal, Text, TextField } from 'gestalt';
 import moment from 'moment';
 import _ from 'lodash';
+import { WithContext as ReactTags } from 'react-tag-input';
 import { moodToColorMap } from '../constants';
 import { createEntry, updateEntry } from '../../actions/';
 
@@ -81,6 +82,7 @@ class DayBox extends Component {
   }
 
   drawUpdate(update, idx) {
+    const tags = _.map(update.tags, tag => ({ text: tag.tag, id: (tag.id || 'null').toString() }));
     return (
       <Box key={idx}>
         <Box paddingY={2} paddingX={4} display="flex" alignItems="center">
@@ -104,6 +106,11 @@ class DayBox extends Component {
             </Label>
           </Column>
           <Column span={8}>
+            <ReactTags
+              tags={tags}
+              handleDelete={(e) => this.handleDeleteTag(e, idx)}
+              handleAddition={(e) => this.handleAddTag(e, idx)}
+            />
           </Column>
         </Box>
         <Box display="flex" direction="row" justifyContent="end" right>
@@ -130,7 +137,7 @@ class DayBox extends Component {
 
   removeUpdate(idx) {
     const { modalEntry } = this.state;
-    modalEntry.updates = _.slice(modalEntry.updates, 0, idx).concat(_.drop(modalEntry.updates, idx+1))
+    modalEntry.updates = modalEntry.updates.filter((update, i) => i !== idx)
     this.setState(prevState => ({ modalEntry: modalEntry })); 
   }
 
@@ -140,8 +147,25 @@ class DayBox extends Component {
     this.setState(prevState => ({ modalEntry: modalEntry }));
   }
 
-  handleSave() {
+  handleAddTag(tag, idx) {
+    const { modalEntry } = this.state;
+    modalEntry.updates[idx].tags.push({ tag: tag.text, id: null });
+    this.setState(prevState => ({ modalEntry: modalEntry }));
+  }
 
+  handleDeleteTag(tagIdx, updateIdx) {
+    const { modalEntry } = this.state;
+    modalEntry.updates[updateIdx].tags = modalEntry.updates[updateIdx].tags.filter((tag, i) => i !== tagIdx);
+    this.setState(prevState => ({ modalEntry: modalEntry }));
+  }
+
+  handleSave() {
+    const { modalEntry } = this.state;
+    if(!modalEntry.id) {
+      this.props.createEntry(modalEntry, () => window.location.reload());
+    } else {
+      this.props.updateEntry(modalEntry, () => window.location.reload());
+    }
   }
 
   /* END FUNCTIONS FOR MODAL */
@@ -211,9 +235,8 @@ class DayBox extends Component {
             <Box paddingY={2} paddingX={4} display="flex">
               <Heading size="xs">Project Updates</Heading>
             </Box>
-            <Divider />
             {_.map(modalEntry.updates, (update, i) => this.drawUpdate(update, i))}
-            <Label><Text align="left" bold>Add an Update</Text></Label>
+            <Text align="left" bold>Add an Update</Text>
             <IconButton
               accessibilityLabel="add an update"
               icon="add-circle"
@@ -267,6 +290,7 @@ function mapStateToProps({ daily_entries }, ownProps) {
   const { dateStr } = ownProps;
   return {
     entry: daily_entries[dateStr] || {
+      date_string: dateStr,
       mood_score: 0,
       mood_reason: '',
       updates: []
