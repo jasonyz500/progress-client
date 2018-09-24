@@ -1,21 +1,11 @@
 import axios from 'axios';
+import { ROOT_URL, getConfig } from './utils';
 
 export const FETCH_ENTRIES_DAILY = 'fetch_entries_daily';
 export const FETCH_ENTRY_DAILY = 'fetch_entry_daily';
 export const CREATE_ENTRY_DAILY = 'create_entry_daily';
 export const UPDATE_ENTRY_DAILY = 'update_entry_daily';
 export const DELETE_ENTRY_DAILY = 'delete_entry_daily';
-
-const ROOT_URL = 'http://localhost:3000';
-
-function getConfig() {
-  return {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `bearer ${localStorage.getItem('auth_token')}`
-    }
-  }
-}
 
 export function fetchEntriesDaily(startDate, endDate) {
   let url = `${ROOT_URL}/entries/daily?startDate=${startDate}&endDate=${endDate}`;

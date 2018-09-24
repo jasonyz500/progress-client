@@ -5,7 +5,8 @@ import moment from 'moment';
 import _ from 'lodash';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { moodToColorMap } from '../constants';
-import { createEntry, updateEntry } from '../../actions/';
+import { createEntry, updateEntry, getTags } from '../../actions/';
+import './tags.css';
 
 class DayBox extends Component {
   constructor(props) {
@@ -63,6 +64,7 @@ class DayBox extends Component {
   /* FUNCTIONS FOR MODAL */
 
   toggleModal() {
+    this.props.getTags();
     this.setState(prevState => ({ 
       showModal: !prevState.showModal,
       modalEntry: _.cloneDeep(this.props.entry)
@@ -110,6 +112,7 @@ class DayBox extends Component {
               tags={tags}
               handleDelete={(e) => this.handleDeleteTag(e, idx)}
               handleAddition={(e) => this.handleAddTag(e, idx)}
+              suggestions={this.props.tags}
             />
           </Column>
         </Box>
@@ -286,7 +289,7 @@ class DayBox extends Component {
 	}
 }
 
-function mapStateToProps({ daily_entries }, ownProps) {
+function mapStateToProps({ daily_entries, tags }, ownProps) {
   const { dateStr } = ownProps;
   return {
     entry: daily_entries[dateStr] || {
@@ -294,9 +297,10 @@ function mapStateToProps({ daily_entries }, ownProps) {
       mood_score: 0,
       mood_reason: '',
       updates: []
-    }
+    },
+    tags: _.map(tags, (tag) => ({ id: tag, text: tag }))
   }
 }
 
-export default connect(mapStateToProps, { createEntry, updateEntry })(DayBox);
+export default connect(mapStateToProps, { createEntry, updateEntry, getTags })(DayBox);
 
