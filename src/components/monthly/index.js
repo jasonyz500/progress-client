@@ -91,11 +91,11 @@ class Monthly extends Component {
       <Box>
         {_.map(chunked, (chunk, i) => {
           return (
-            <Box color="white" display="flex" direction="row" height={125}>
+            <Box color="white" display="flex" direction="row" height={125} key={i}>
               {_.map(chunk, (day, j) => {
                 const tag = i < 3 ? "Spark Pipeline Validation" : "Sideswipe Experiment";
                 return (
-                  <Column span={3} id={j}>
+                  <Column span={3} key={j}>
                     <Box position="relative" dangerouslySetInlineStyle={{
                       __style: { border: '1px solid lightgray', height: '100%' },
                     }}>
@@ -120,11 +120,11 @@ class Monthly extends Component {
     const data = this.state.weeks;
     return _.map(data, (week, i) => {
       return (
-        <Box>
+        <Box key={i}>
           <Box display="flex" direction="row" marginBottom={1}>
             {
               Array(5).fill().map((_, j) => (
-                <Column span={3}>
+                <Column span={3} key={j}>
                   <Box color={moodToColorMap[week.mood]} padding={1} dangerouslySetInlineStyle={{
                     __style: { border: '1px solid lightgray' }
                   }}>
@@ -139,7 +139,9 @@ class Monthly extends Component {
           }}>
             <Text bold={true}>Weekly Project Updates</Text>
             {_.map(week.entries, entry => (
-              <Text align="left">- {entry.headline} {entry.tags && entry.tags.length ? `[${entry.tags.join(', ')}]` : "[No tags]"}</Text>
+              <Text align="left" key={entry.headline}>
+                - {entry.headline} {entry.tags && entry.tags.length ? `[${entry.tags.join(', ')}]` : "[No tags]"}
+              </Text>
             ))}
           </Box>
         </Box>
@@ -175,7 +177,7 @@ class Monthly extends Component {
         <Box color="white" display="flex" direction="row" padding={1} marginTop={1} alignItems="center" alignContent="center" bottom={true}>
           {_.map(["Mon", "Tue", "Wed", "Thu", "Fri"], day => {
             return (
-              <Column span={3} id={day}>
+              <Column span={3} key={day}>
                 <Box color="white" padding={1} marginRight={1}>
                   <Text bold={true} align="center">{day}</Text>
                 </Box>

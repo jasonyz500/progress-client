@@ -56,11 +56,11 @@ class Yearly extends Component {
       rows.push(data.slice(0, 4));
       rows.push(data.slice(4, 7));
     }
-    return _.map(rows, row => (
-      <Box display="flex" direction="row">
+    return _.map(rows, (row, i) => (
+      <Box display="flex" direction="row" key={i}>
         {
           _.map(row, pill => (
-            <Column span={pill.end - pill.start + 1}>
+            <Column span={pill.end - pill.start + 1} key={`${pill.start}-${pill.end}`}>
               <Box shape="pill" color={pill.name ? "lightGray" : "transparent"} marginTop={1} padding={1}>
                 <Text align="center">{pill.name}</Text>
               </Box>
@@ -74,14 +74,14 @@ class Yearly extends Component {
   drawQuarter(quarter, projects) {
     const { currentWeek } = this.state;
     return (
-      <Box margin={1} padding={1}>
+      <Box margin={1} padding={1} key={quarter}>
         <Box display="flex" direction="row">
           {
             Array(13).fill().map((_, i) => {
               const thisWeek = quarter * 13 + i;
               const color = thisWeek < currentWeek ? "midnight" : (thisWeek > currentWeek ? "blue" : "watermelon")
               return (
-                <Column span={1}>
+                <Column span={1} key={i}>
                   <Box shape="circle" height={45} width={45} color={color}></Box>
                 </Column>
               );
