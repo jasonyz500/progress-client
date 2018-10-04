@@ -85,4 +85,4 @@ class Weekly extends Component {
   }
 }
 
-export default connect(null,{ fetchEntriesDaily })(Weekly);
+export default connect(null, { fetchEntriesDaily })(Weekly);

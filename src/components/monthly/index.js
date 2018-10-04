@@ -1,156 +1,56 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Box, Column, Heading, IconButton, Label, Switch, Text } from 'gestalt';
-import { moodToColorMap } from '../constants';
+import moment from 'moment';
 import _ from 'lodash';
-
-const fakeData = {
-  days: Array(25).fill(),
-  weeks: [
-    {
-      mood: 5,
-      entries: [
-        {
-          headline: "Wrapped up video aggregation job. Finally shipped first spark code to prod",
-          body: "Learned a lot about spark",
-          tags: ["Spark", "Aggregation job refactor"]
-        },
-        {
-          headline: "Added code for force requesting CPC only ads. Involved diving through some new Mohawk code.",
-          body: "",
-          tags: ["Sideswipe Experiment"]
-        }
-      ]
-    },
-    {
-      mood: 3,
-      entries: [
-        {
-          headline: "Landed image quality bug for carousel creation",
-          body: "",
-          tags: ["Carousel", "Creation"]
-        },
-        {
-          headline: "Finishing up front end work for reporting",
-          body: "",
-          tags: ["Carousel", "Reporting"]
-        }
-      ]
-    },
-    {
-      mood: 4,
-      entries: [
-        {
-          headline: "Investigate dblwideflag discrepency sent to Moat",
-          body: "",
-          tags: ["Moat", "Spark"]
-        }
-      ]
-    },
-    {
-      mood: 2,
-      entries: [
-        {
-          headline: "Updated validation rule to account for every creative type supported in bulk",
-          body: "",
-          tags: []
-        },
-        {
-          headline: "'True' - Collins 'I am Collins' Chung 2018",
-          body: "",
-          tags: ["Collins Chung", "2018"]
-        }
-      ]
-    },
-    {
-      mood: 3,
-      entries: []
-    },
-  ],
-  dailyView: false,
-  title: "July 2018"
-};
-
-for(let i in fakeData.days) {
-  fakeData.days[i] = Math.floor(Math.random() * 5) + 1;
-}
+import WeeklyCalendar from './weekly_calendar';
+import DailyCalendar from './daily_calendar';
+import { fetchUpdatesWeekly, fetchEntriesDaily } from '../../actions';
 
 class Monthly extends Component {
   constructor(props) {
     super(props);
-    this.state = fakeData;
-    this.handleChange = this._handleChange.bind(this);
+    this.state = { dailyView: false };
   }
 
-  _handleChange() {
+  componentDidMount() {
+    const monthStr = this.props.match.params.monthStr || moment().startOf('month').format('YYYY-MM');
+    this.setNewMonthState(monthStr);
+  }
+
+  handleChangeView() {
     this.setState({ dailyView: !this.state.dailyView });
   }
 
-  drawDailyCalendar() {
-    const chunked = _.chunk(this.state.days, 5);
-    return (
-      <Box>
-        {_.map(chunked, (chunk, i) => {
-          return (
-            <Box color="white" display="flex" direction="row" height={125} key={i}>
-              {_.map(chunk, (day, j) => {
-                const tag = i < 3 ? "Spark Pipeline Validation" : "Sideswipe Experiment";
-                return (
-                  <Column span={3} key={j}>
-                    <Box position="relative" dangerouslySetInlineStyle={{
-                      __style: { border: '1px solid lightgray', height: '100%' },
-                    }}>
-                      <Box color={moodToColorMap[day]} padding={1} flex="grow">
-                        <Text>{(i * 7 + j + 1) % 31 + 1}</Text>
-                      </Box>
-                      <Box padding={1} position="absolute" bottom left>
-                        <Text bold={true}>{`[${tag}]`}</Text>
-                       </Box>
-                    </Box>
-                  </Column>
-                );
-              })}
-            </Box>
-          );
-        })}
-      </Box>
-    );
+  handleNextMonth() {
+    this.handleChangeMonth(1);
   }
 
-  drawWeeklyCalendar() {
-    const data = this.state.weeks;
-    return _.map(data, (week, i) => {
-      return (
-        <Box key={i}>
-          <Box display="flex" direction="row" marginBottom={1}>
-            {
-              Array(5).fill().map((_, j) => (
-                <Column span={3} key={j}>
-                  <Box color={moodToColorMap[week.mood]} padding={1} dangerouslySetInlineStyle={{
-                    __style: { border: '1px solid lightgray' }
-                  }}>
-                    <Text>{(i * 7 + j + 1) % 31 + 1}</Text>
-                  </Box>
-                </Column>
-              ))
-            }
-          </Box>
-          <Box color="white" padding={2} height={100} dangerouslySetInlineStyle={{
-            __style: { 'borderLeft': '1px solid lightgray', 'borderRight': '1px solid lightgray', 'borderBottom': '1px solid lightgray' }
-          }}>
-            <Text bold={true}>Weekly Project Updates</Text>
-            {_.map(week.entries, entry => (
-              <Text align="left" key={entry.headline}>
-                - {entry.headline} {entry.tags && entry.tags.length ? `[${entry.tags.join(', ')}]` : "[No tags]"}
-              </Text>
-            ))}
-          </Box>
-        </Box>
-      );
-    });
+  handlePreviousMonth() {
+    this.handleChangeMonth(-1);
+  }
+
+  handleChangeMonth(diff) {
+    const { monthStr } = this.state;
+    const nextMonthStr = moment(monthStr).add(diff, 'months').format('YYYY-MM');
+    this.props.history.push(`/monthly/${nextMonthStr}`);
+    this.setNewMonthState(nextMonthStr);
+  }
+
+  setNewMonthState(monthStr) {
+    this.setState(prevState => ({ monthStr: monthStr }))
+    this.fetchData();
+  }
+
+  fetchData() {
+    this.props.fetchUpdatesWeekly(this.state.monthStr);
+    const monthStart = moment(this.state.monthStr).startOf('month').format('YYYY-MM-DD');
+    const monthEnd = moment(this.state.monthStr).endOf('month').format('YYYY-MM-DD');
+    this.props.fetchEntriesDaily(monthStart, monthEnd);
   }
 
   render() {
-    const data = this.state;
+    const state = this.state;
     return (
       <Box>
         <Box paddingY={1}>
@@ -159,7 +59,7 @@ class Monthly extends Component {
           </Label>
         </Box>
         <Switch
-          onChange={this.handleChange}
+          onChange={this.handleChangeView.bind(this)}
           id="dateView"
           switched={this.state.dailyView}
         />
@@ -167,11 +67,13 @@ class Monthly extends Component {
           <IconButton
             accessibilityLabel="Previous Month"
             icon="arrow-back"
+            onClick={this.handlePreviousMonth.bind(this)}
           />
-          <Heading size="xs">{data.title}</Heading>
+          <Heading size="xs">{moment(state.monthStr).format('MMMM YYYY')}</Heading>
           <IconButton
             accessibilityLabel="Next Month"
             icon="arrow-forward"
+            onClick={this.handleNextMonth.bind(this)}
           />
         </Box>
         <Box color="white" display="flex" direction="row" padding={1} marginTop={1} alignItems="center" alignContent="center" bottom={true}>
@@ -185,10 +87,10 @@ class Monthly extends Component {
             );
           })}
         </Box>
-        {data.dailyView ? this.drawDailyCalendar() : this.drawWeeklyCalendar()}
+        {state.dailyView ? <DailyCalendar /> : <WeeklyCalendar />}
       </Box>
     );
   }
 }
 
-export default Monthly;
+export default connect(null, { fetchUpdatesWeekly, fetchEntriesDaily })(Monthly);

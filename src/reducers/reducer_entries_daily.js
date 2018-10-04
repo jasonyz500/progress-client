@@ -4,6 +4,24 @@ import { FETCH_ENTRIES_DAILY, CREATE_ENTRY_DAILY, UPDATE_ENTRY_DAILY } from '../
 export default function(state = {}, action) {
   switch (action.type) {
     case FETCH_ENTRIES_DAILY:
+      /*
+      format should be:
+      {
+        'date': {
+          id: x,
+          date: xxxx-xx-xx, (redundant but useful)
+          mood_score: x,
+          mood_reason: x,
+          updates: [
+            {
+              id: x,
+              body: x,
+              tags: [{ id: x, tag: x }, {...}]
+            }, {...}
+          ]  
+        }
+      }
+      */
       // result should be sorted from server, but sort again in case it's not
       const rows = _.sortBy(action.payload.data, ['date_string', 'updateid', 'tag']);
       // first build a map of updates by going through rows and adding tags
