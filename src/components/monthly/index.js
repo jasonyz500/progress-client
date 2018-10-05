@@ -49,6 +49,22 @@ class Monthly extends Component {
     this.props.fetchEntriesDaily(monthStart, monthEnd);
   }
 
+  getDatesToRender() {
+    const { monthStr } = this.state;
+    const start = moment(monthStr).startOf('month').startOf('isoWeek');
+    const end = moment(monthStr).endOf('month').endOf('isoWeek').add(-2, 'days');
+    const res = [];
+    while (start <= end) {
+      const week = [];
+      Array(5).fill().forEach(() => {
+        week.push(_.cloneDeep(start));
+        start.add(1, 'days');
+      });
+      res.push(week);
+    }
+    return res;
+  }
+
   render() {
     const state = this.state;
     return (

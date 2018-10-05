@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Box, Button, Column, Divider, Heading, Icon, IconButton, Label, Modal, Text, TextField } from 'gestalt';
+import { Box, Button, Column, Divider, Heading, Icon, IconButton, Label, Modal, Text, TextArea } from 'gestalt';
 import moment from 'moment';
 import _ from 'lodash';
 import { WithContext as ReactTags } from 'react-tag-input';
@@ -94,7 +94,7 @@ class DayBox extends Component {
             </Label>
           </Column>
           <Column span={8}>
-            <TextField 
+            <TextArea 
               id={`update${idx}`}
               value={this.state.modalEntry.updates[idx].body}
               onChange={(e) => this.handleChangeUpdate(e.value, idx)}
@@ -226,11 +226,12 @@ class DayBox extends Component {
                 </Label>
               </Column>
               <Column span={8}>
-                <TextField
+                <TextArea
                   id="mood_reason"
                   onChange={this.handleMoodReason.bind(this)}
                   value={modalEntry.mood_reason}
                   placeholder="Describe your mood"
+                  rows={2}
                 />
               </Column>
             </Box>

@@ -5,8 +5,11 @@ import { fetchEntriesDaily } from '../../actions';
 import { moodToColorMap } from '../constants';
 import _ from 'lodash';
 
-
 class DailyCalendar extends Component {
+  componentWillMount() {
+    // this.props.fetchEntriesDaily();
+  }
+
   render() {
     const chunked = _.chunk(this.state.days, 5);
     return (
@@ -39,4 +42,9 @@ class DailyCalendar extends Component {
   }
 }
 
-export default connect(null, { fetchEntriesDaily })(DailyCalendar);
+function mapStateToProps({ daily_entries }, ownProps) {
+  const { monthStart, monthEnd } = ownProps;
+  return {};
+}
+
+export default connect(mapStateToProps, { fetchEntriesDaily })(DailyCalendar);

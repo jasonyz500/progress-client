@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Box, Column, IconButton, Text } from 'gestalt';
+import { Box, Column, Divider, IconButton, Text } from 'gestalt';
 import { moodToColorMap } from '../constants';
 import _ from 'lodash';
 
@@ -94,15 +94,28 @@ class WeeklyCalendar extends Component {
               ))
             }
           </Box>
-          <Box color="white" padding={2} height={100} dangerouslySetInlineStyle={{
+          <Box color="white" padding={2} height="100%" dangerouslySetInlineStyle={{
             __style: { 'borderLeft': '1px solid lightgray', 'borderRight': '1px solid lightgray', 'borderBottom': '1px solid lightgray' }
           }}>
-            <Text bold={true}>Weekly Project Updates</Text>
-            {_.map(week.entries, entry => (
-              <Text align="left" key={entry.headline}>
-                - {entry.headline} {entry.tags && entry.tags.length ? `[${entry.tags.join(', ')}]` : "[No tags]"}
-              </Text>
-            ))}
+            <Box display="flex" direction="row" alignItems="center" paddingX={1}>
+              <Box flex="grow">
+                <Text bold={true}>Weekly Project Updates</Text>
+              </Box>
+              <IconButton
+                accessibilityLabel="edit"
+                icon="edit"
+                iconColor="red"
+                size="sm"
+              />
+            </Box>
+            <Divider />
+            <Box paddingX={1} paddingY={2}>
+              {_.map(week.entries, entry => (
+                <Text align="left" key={entry.headline}>
+                  - {entry.headline} {entry.tags && entry.tags.length ? `[${entry.tags.join(', ')}]` : "[No tags]"}
+                </Text>
+              ))}
+            </Box>
           </Box>
         </Box>
       );
@@ -111,6 +124,7 @@ class WeeklyCalendar extends Component {
 }
 
 function mapStateToProps(state, ownProps) {
+  console.log(state);
   return state;
 }
 
