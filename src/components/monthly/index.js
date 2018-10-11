@@ -61,6 +61,7 @@ class Monthly extends Component {
         start.add(1, 'days');
       });
       res.push(week);
+      start.add(3, 'days');
     }
     return res;
   }
@@ -103,7 +104,7 @@ class Monthly extends Component {
             );
           })}
         </Box>
-        {state.dailyView ? <DailyCalendar /> : <WeeklyCalendar />}
+        {state.dailyView ? <DailyCalendar dates={this.getDatesToRender()}/> : <WeeklyCalendar dates={this.getDatesToRender()} />}
       </Box>
     );
   }

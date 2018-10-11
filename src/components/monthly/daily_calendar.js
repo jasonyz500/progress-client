@@ -1,34 +1,48 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Box, Column, Text } from 'gestalt';
-import { fetchEntriesDaily } from '../../actions';
 import { moodToColorMap } from '../constants';
 import _ from 'lodash';
 
 class DailyCalendar extends Component {
-  componentWillMount() {
-    // this.props.fetchEntriesDaily();
+  getColorForBox(day) {
+    const dateStr = day.format('YYYY-MM-DD');
+    const moodScore = _.get(this.props.daily_entries, `${dateStr}.mood_score`, 0);
+    return moodToColorMap[moodScore];
+  }
+
+  drawTags(day) {
+    const dateStr = day.format('YYYY-MM-DD');
+    const tags = {};
+    for (let update of _.get(this.props.daily_entries, `${dateStr}.updates`, [])) {
+      for (let tag of update.tags) {
+        tags[tag.tag] = 1;
+      }
+    }
+    if (_.isEmpty(tags)) { 
+      return; 
+    }
+    return (<Text>{`[${_.keys(tags).join(', ')}]`}</Text>);
   }
 
   render() {
-    const chunked = _.chunk(this.state.days, 5);
+    const { dates } = this.props;
     return (
       <Box>
-        {_.map(chunked, (chunk, i) => {
+        {_.map(dates, (row, i) => {
           return (
             <Box color="white" display="flex" direction="row" height={125} key={i}>
-              {_.map(chunk, (day, j) => {
-                const tag = i < 3 ? "Spark Pipeline Validation" : "Sideswipe Experiment";
+              {_.map(row, (day, j) => {
                 return (
                   <Column span={3} key={j}>
                     <Box position="relative" dangerouslySetInlineStyle={{
                       __style: { border: '1px solid lightgray', height: '100%' },
                     }}>
-                      <Box color={moodToColorMap[day]} padding={1} flex="grow">
-                        <Text>{(i * 7 + j + 1) % 31 + 1}</Text>
+                      <Box color={this.getColorForBox(day)} padding={1} flex="grow">
+                        <Text>{day.format('D')}</Text>
                       </Box>
                       <Box padding={1} position="absolute" bottom left>
-                        <Text bold={true}>{`[${tag}]`}</Text>
+                        <Text bold={true}>{this.drawTags(day)}</Text>
                        </Box>
                     </Box>
                   </Column>
@@ -43,8 +57,7 @@ class DailyCalendar extends Component {
 }
 
 function mapStateToProps({ daily_entries }, ownProps) {
-  const { monthStart, monthEnd } = ownProps;
-  return {};
+  return { daily_entries };
 }
 
-export default connect(mapStateToProps, { fetchEntriesDaily })(DailyCalendar);
+export default connect(mapStateToProps)(DailyCalendar);

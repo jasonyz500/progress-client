@@ -124,7 +124,6 @@ class WeeklyCalendar extends Component {
 }
 
 function mapStateToProps(state, ownProps) {
-  console.log(state);
   return state;
 }
 
