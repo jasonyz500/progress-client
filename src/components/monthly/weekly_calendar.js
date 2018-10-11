@@ -3,92 +3,30 @@ import { connect } from 'react-redux';
 import { Box, Column, Divider, IconButton, Text } from 'gestalt';
 import { moodToColorMap } from '../constants';
 import _ from 'lodash';
-
-const fakeData = {
-  weeks: [
-    {
-      mood: 5,
-      entries: [
-        {
-          headline: "Wrapped up video aggregation job. Finally shipped first spark code to prod",
-          body: "Learned a lot about spark",
-          tags: ["Spark", "Aggregation job refactor"]
-        },
-        {
-          headline: "Added code for force requesting CPC only ads. Involved diving through some new Mohawk code.",
-          body: "",
-          tags: ["Sideswipe Experiment"]
-        }
-      ]
-    },
-    {
-      mood: 3,
-      entries: [
-        {
-          headline: "Landed image quality bug for carousel creation",
-          body: "",
-          tags: ["Carousel", "Creation"]
-        },
-        {
-          headline: "Finishing up front end work for reporting",
-          body: "",
-          tags: ["Carousel", "Reporting"]
-        }
-      ]
-    },
-    {
-      mood: 4,
-      entries: [
-        {
-          headline: "Investigate dblwideflag discrepency sent to Moat",
-          body: "",
-          tags: ["Moat", "Spark"]
-        }
-      ]
-    },
-    {
-      mood: 2,
-      entries: [
-        {
-          headline: "Updated validation rule to account for every creative type supported in bulk",
-          body: "",
-          tags: []
-        },
-        {
-          headline: "'True' - Collins 'I am Collins' Chung 2018",
-          body: "",
-          tags: ["Collins Chung", "2018"]
-        }
-      ]
-    },
-    {
-      mood: 3,
-      entries: []
-    },
-  ],
-  dailyView: false,
-  title: "July 2018"
-};
+import moment from 'moment';
 
 class WeeklyCalendar extends Component {
-  constructor(props) {
-    super(props);
-    this.state = fakeData;
+  getWeekMoodFromDays(weekStr) {
+    const days = Array(5).fill().map((_, i) => moment(weekStr).add(i, 'days').format('YYYY-MM-DD'));
+    const entries = _.filter(_.map(days, ds => this.props.daily_entries[ds]), 'mood_score');
+    if (entries.length === 0) return moodToColorMap[0];
+    const avg = _.sum(_.map(entries, 'mood_score')) / entries.length;
+    return moodToColorMap[avg];
   }
 
   render() {
-    const data = this.state.weeks;
-    return _.map(data, (week, i) => {
+    const { dates, weekly_updates } = this.props;
+    return _.map(dates, (week, i) => {
       return (
         <Box key={i}>
           <Box display="flex" direction="row" marginBottom={1}>
             {
-              Array(5).fill().map((_, j) => (
+              _.map(week, (day, j) => (
                 <Column span={3} key={j}>
-                  <Box color={moodToColorMap[week.mood]} padding={1} dangerouslySetInlineStyle={{
+                  <Box color={this.getWeekMoodFromDays(week[0])} padding={1} dangerouslySetInlineStyle={{
                     __style: { border: '1px solid lightgray' }
                   }}>
-                    <Text>{(i * 7 + j + 1) % 31 + 1}</Text>
+                    <Text>{day.format('D')}</Text>
                   </Box>
                 </Column>
               ))
@@ -123,8 +61,8 @@ class WeeklyCalendar extends Component {
   }
 }
 
-function mapStateToProps(state, ownProps) {
-  return state;
+function mapStateToProps({ daily_entries, weekly_updates }, ownProps) {
+  return { daily_entries, weekly_updates };
 }
 
 export default connect(mapStateToProps)(WeeklyCalendar);
