@@ -4,6 +4,7 @@ import { Box, Heading, IconButton } from 'gestalt';
 import moment from 'moment';
 import DayBox from './day_box';
 import { fetchEntriesDaily } from '../../actions/';
+import { getDisplayTitle } from '../common/utils';
 
 class Weekly extends Component {
   constructor(props) {
@@ -46,18 +47,8 @@ class Weekly extends Component {
     this.props.fetchEntriesDaily(this.state.weekStr, this.state.weekStrEnd);
   }
 
-  // functions for rendering
-  getDisplayTitle() {
-    const { weekStr, weekStrEnd } = this.state;
-    const start = moment(weekStr);
-    const end = moment(weekStrEnd);
-    const firstHalf = start.format('MMMM D');
-    const secondHalf = start.month() === end.month() ? end.format('D') : end.format('MMMM D');
-    return `${firstHalf} - ${secondHalf} (Week ${start.format('W')})`
-  }
-
   render() {
-    const { weekStrEnd } = this.state;
+    const { weekStr, weekStrEnd } = this.state;
     const days = [...Array(5).keys()].map(i => ( moment(weekStrEnd).subtract(i, 'days').format('YYYY-MM-DD')) );
     return (
       <Box>
@@ -67,7 +58,7 @@ class Weekly extends Component {
             icon="arrow-back"
             onClick={this.handlePreviousWeek.bind(this)}
           />
-          <Heading size="xs">{this.getDisplayTitle()}</Heading>
+          <Heading size="xs">{getDisplayTitle(weekStr)}</Heading>
           <IconButton
             accessibilityLabel="Next Week"
             icon="arrow-forward"

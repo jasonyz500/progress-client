@@ -8,7 +8,7 @@ import { moodToColorMap } from '../common/constants';
 import { createEntry, updateEntry, getTags } from '../../actions/';
 import '../common/tags.css';
 
-class DayBox extends Component {
+class WeekBox extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -254,7 +254,7 @@ class DayBox extends Component {
     );
   }
 
-	render() {
+  render() {
     const { dateStr, entry } = this.props;
     if(moment().startOf('day') < moment(dateStr)) {
       return (
@@ -287,7 +287,7 @@ class DayBox extends Component {
         {this.state.showModal && this.drawEditModal()}
       </Box>
     );
-	}
+  }
 }
 
 function mapStateToProps({ daily_entries, tags }, ownProps) {

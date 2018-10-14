@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Box, Column, Divider, IconButton, Text } from 'gestalt';
-import { moodToColorMap } from '../constants';
+import { Link } from 'react-router-dom';
+import { moodToColorMap } from '../common/constants';
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -10,7 +11,7 @@ class WeeklyCalendar extends Component {
     const days = Array(5).fill().map((_, i) => moment(weekStr).add(i, 'days').format('YYYY-MM-DD'));
     const entries = _.filter(_.map(days, ds => this.props.daily_entries[ds]), 'mood_score');
     if (entries.length === 0) return moodToColorMap[0];
-    const avg = _.sum(_.map(entries, 'mood_score')) / entries.length;
+    const avg = _.round(_.sum(_.map(entries, 'mood_score')) / entries.length);
     return moodToColorMap[avg];
   }
 
@@ -39,18 +40,20 @@ class WeeklyCalendar extends Component {
               <Box flex="grow">
                 <Text bold={true}>Weekly Project Updates</Text>
               </Box>
-              <IconButton
-                accessibilityLabel="edit"
-                icon="edit"
-                iconColor="red"
-                size="sm"
-              />
+              <Link to={`/edit/weekly/${week[0].format('YYYY-MM-DD')}`}>
+                <IconButton
+                  accessibilityLabel="edit"
+                  icon="edit"
+                  iconColor="red"
+                  size="sm"
+                />
+              </Link>
             </Box>
             <Divider />
             <Box paddingX={1} paddingY={2}>
-              {_.map(week.entries, entry => (
-                <Text align="left" key={entry.headline}>
-                  - {entry.headline} {entry.tags && entry.tags.length ? `[${entry.tags.join(', ')}]` : "[No tags]"}
+              {_.map(weekly_updates[week[0].format('YYYY-MM-DD')], update => (
+                <Text align="left" key={update.body}>
+                  - {update.body} {update.tags && update.tags.length ? `[${update.tags.join(', ')}]` : ""}
                 </Text>
               ))}
             </Box>

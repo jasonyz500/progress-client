@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Box, Column, Text } from 'gestalt';
-import { moodToColorMap } from '../constants';
+import { moodToColorMap } from '../common/constants';
 import _ from 'lodash';
 
 class DailyCalendar extends Component {

@@ -61,7 +61,7 @@ class Monthly extends Component {
         start.add(1, 'days');
       });
       res.push(week);
-      start.add(3, 'days');
+      start.add(2, 'days');
     }
     return res;
   }
@@ -72,7 +72,7 @@ class Monthly extends Component {
       <Box>
         <Box paddingY={1}>
           <Label htmlFor="dateView">
-            <Text>{"Show colors for each day"}</Text>
+            <Text>{"Toggle Daily / Weekly Breakdown"}</Text>
           </Label>
         </Box>
         <Switch

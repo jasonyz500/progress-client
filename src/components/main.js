@@ -4,8 +4,9 @@ import Login from './login/';
 import Weekly from './weekly/';
 import Monthly from './monthly/';
 import Yearly from './yearly/';
+import EditWeeklyUpdates from './edit/edit_weekly_updates';
 
-const Main = () => (
+const Main = () => ( // todo: add validation for edit/weekly/:weekStr param
   <main>
     <Switch>
       <Route exact path='/' component={Weekly}/>
@@ -13,6 +14,7 @@ const Main = () => (
       <Route path='/monthly' component={Monthly}/>
       <Route path='/yearly' component={Yearly}/>
       <Route path='/login' component={Login}/>
+      <Route path='/edit/weekly/:weekStr' component={EditWeeklyUpdates}/>
     </Switch>
   </main>
 )
