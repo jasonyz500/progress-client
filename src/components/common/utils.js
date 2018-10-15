@@ -7,3 +7,10 @@ export function getDisplayTitle(weekStr) {
   const secondHalf = start.month() === end.month() ? end.format('D') : end.format('MMMM D');
   return `${firstHalf} - ${secondHalf} (Week ${start.format('W')})`
 }
+
+export function drawTags(tags) {
+  if(!tags || !tags.length) {
+    return '[No Tags]';
+  }
+  return `[${tags.map(tag => (tag.tag)).join(', ')}]`;
+}

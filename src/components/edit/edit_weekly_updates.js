@@ -102,10 +102,18 @@ class EditWeeklyUpdates extends Component {
     this.setState(prevState => ({ updates }));
   }
 
+  leavePageFn() {
+    this.props.history.length ? this.props.history.goBack() : this.props.history.push('/monthly');
+  }
+
   handleSave() {
     console.log(this.props);
     const { updates, weekStr } = this.state;
-    this.props.postUpdatesWeekly(weekStr, updates);
+    this.props.postUpdatesWeekly(weekStr, updates, this.leavePageFn.bind(this));
+  }
+
+  handleCancel() {
+    this.leavePageFn();
   }
 
   render() {
@@ -132,6 +140,7 @@ class EditWeeklyUpdates extends Component {
           <Box marginRight={1}>
             <Button
               text="Cancel"
+              onClick={this.handleCancel.bind(this)}
               inline
             />
           </Box>

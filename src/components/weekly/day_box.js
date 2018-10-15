@@ -5,6 +5,7 @@ import moment from 'moment';
 import _ from 'lodash';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { moodToColorMap } from '../common/constants';
+import { drawTags } from '../common/utils';
 import { createEntry, updateEntry, getTags } from '../../actions/';
 import '../common/tags.css';
 
@@ -47,17 +48,10 @@ class DayBox extends Component {
         <Text bold={true}>Project Updates</Text>
         <br />
         {entry.updates.map((update, i) => (
-          <Text key={i} align="left">- {update.body} {this.drawTags(update.tags)}</Text>
+          <Text key={i} align="left">- {update.body} {drawTags(update.tags)}</Text>
         ))}
       </Box>
     );
-  }
-
-  drawTags(tags) {
-    if(!tags || !tags.length) {
-      return '[No Tags]';
-    }
-    return `[${tags.map(tag => (tag.tag)).join(', ')}]`;
   }
 
   /* END FUNCTIONS FOR PARENT DATE BOX */

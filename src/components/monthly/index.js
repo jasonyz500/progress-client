@@ -43,9 +43,9 @@ class Monthly extends Component {
   }
 
   fetchData() {
-    this.props.fetchUpdatesWeekly(this.state.monthStr);
     const monthStart = moment(this.state.monthStr).startOf('month').format('YYYY-MM-DD');
     const monthEnd = moment(this.state.monthStr).endOf('month').format('YYYY-MM-DD');
+    this.props.fetchUpdatesWeekly(monthStart, monthEnd);
     this.props.fetchEntriesDaily(monthStart, monthEnd);
   }
 
