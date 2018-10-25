@@ -53,7 +53,7 @@ class WeeklyCalendar extends Component {
             <Divider />
             <Box paddingX={1} paddingY={2}>
               {_.map(weekly_updates[week[0].format('YYYY-MM-DD')], update => (
-                <Text key={i} align="left">- {update.body} {drawTags(update.tags)}</Text>
+                <Text key={update.body} align="left">- {update.body} {drawTags(update.tags)}</Text>
               ))}
             </Box>
           </Box>

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Box, Column, Heading, Text } from 'gestalt';
 import _ from 'lodash';
 
@@ -111,4 +112,8 @@ class Yearly extends Component {
   }
 }
 
-export default Yearly;
+function mapStateToProps() {
+
+}
+
+export default connect(mapStateToProps)(Yearly);
