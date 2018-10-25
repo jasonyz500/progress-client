@@ -1,7 +1,12 @@
 # progress-client
 
-todo
+next features
+add yearly view
 add calendar (better date selection) to weekly page
-add indices to tag table in db
-implement weekly input in monthly view
-implement "daily breakdown" in monthly view
+encryption
+profile page
+password recovery
+
+bug list
+dedupe tags fetching
+prevent blank tags from being saved when deselecting an empty tag input
