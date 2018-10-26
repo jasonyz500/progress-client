@@ -5,23 +5,23 @@ import _ from 'lodash';
 import moment from 'moment';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { getDisplayTitle } from '../common/utils';
-import { fetchUpdatesWeekly, postUpdatesWeekly, getTags } from '../../actions';
+import { fetchEntriesDaily, createEntry, updateEntry, getTags } from '../../actions';
 
-class EditWeeklyUpdates extends Component {
+class EditDailyEntry extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      weekStr: moment(props.match.params.weekStr).startOf('isoWeek').format('YYYY-MM-DD')
+      dateStr: props.match.params.dateStr
     }
   }
 
   componentWillMount() {
-    this.props.fetchUpdatesWeekly(this.state.weekStr, this.state.weekStr);
+    this.props.fetchEntriesDaily(this.state.dateStr, this.state.dateStr);
     this.props.getTags();
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState(prevState => ({ updates: nextProps.updates }));
+    this.setState(prevState => ({ entry: nextProps.entry }));
   }
 
   drawUpdate(update, idx) {
@@ -104,12 +104,16 @@ class EditWeeklyUpdates extends Component {
   }
 
   leavePageFn() {
-    this.props.history.length ? this.props.history.goBack() : this.props.history.push('/monthly');
+    this.props.history.length ? this.props.history.goBack() : this.props.history.push('/weekly');
   }
 
   handleSave() {
-    const { updates, weekStr } = this.state;
-    this.props.postUpdatesWeekly(weekStr, updates, this.leavePageFn.bind(this));
+    const { entry, dateStr } = this.state;
+    if (entry.id) {
+      this.props.updateEntry(dateStr, entry, this.leavePageFn.bind(this));
+    } else {
+      this.props.createEntry(dateStr, entry, this.leavePageFn.bind(this));
+    }
   }
 
   handleCancel() {
@@ -117,14 +121,14 @@ class EditWeeklyUpdates extends Component {
   }
 
   render() {
-    const { weekStr, updates } = this.state;
+    const { dateStr, entry } = this.state;
     return (
       <Box>
         <Box margin={4} display="flex" direction="row" alignItems="center" alignContent="center">
-          <Heading size="xs">{'Edit Weekly Updates: ' + getDisplayTitle(weekStr)}</Heading>
+          <Heading size="xs">{'Edit Daily Updates: ' + moment(dateStr).format('dddd, MMMM Do')}</Heading>
         </Box>
         <Divider />
-        {_.map(updates, (update, i) => this.drawUpdate(update, i))}
+        {_.map(entry.updates, (update, i) => this.drawUpdate(update, i))}
         <Box margin={3} display="flex" direction="row" alignItems="center" alignContent="center">
           <Text align="left" bold>Add an Update</Text>
           <IconButton
@@ -156,14 +160,17 @@ class EditWeeklyUpdates extends Component {
   }
 }
 
-function mapStateToProps({ weekly_updates, tags }, ownProps) {
-  const { weekStr } = ownProps.match.params;
-  const sow = moment(weekStr).startOf('isoWeek').format('YYYY-MM-DD');
+function mapStateToProps({ daily_entries, tags }, ownProps) {
+  const { dateStr } = ownProps;
   return {
-    updates: weekly_updates[sow] || [],
+    entry: daily_entries[dateStr] || {
+      date_string: dateStr,
+      mood_score: 0,
+      mood_reason: '',
+      updates: []
+    },
     tags: _.map(tags, (tag) => ({ id: tag, text: tag }))
   }
-
 }
 
-export default connect(mapStateToProps, { fetchUpdatesWeekly, postUpdatesWeekly, getTags })(EditWeeklyUpdates);
+export default connect(mapStateToProps, { fetchEntriesDaily, createEntry, updateEntry, getTags })(EditDailyEntry);
