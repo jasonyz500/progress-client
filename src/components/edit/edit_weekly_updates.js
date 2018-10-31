@@ -37,7 +37,7 @@ class EditWeeklyUpdates extends Component {
           <Column span={8}>
             <TextArea 
               id={`update${idx}`}
-              value={this.props.updates[idx].body}
+              value={update.body}
               onChange={(e) => this.handleChangeUpdate(e.value, idx)}
             />
           </Column>
@@ -104,7 +104,7 @@ class EditWeeklyUpdates extends Component {
   }
 
   leavePageFn() {
-    this.props.history.length ? this.props.history.goBack() : this.props.history.push('/monthly');
+    this.props.history.push(`/monthly/${this.state.weekStr.slice(0, 7)}`);
   }
 
   handleSave() {

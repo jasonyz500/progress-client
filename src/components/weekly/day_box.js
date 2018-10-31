@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { Box, Button, Column, Divider, Heading, Icon, IconButton, Label, Modal, Text, TextArea } from 'gestalt';
 import moment from 'moment';
 import _ from 'lodash';
@@ -267,13 +268,14 @@ class DayBox extends Component {
           <Box flex="grow">
             <Text bold={true} size="lg">{moment(dateStr).format('dddd, MMMM Do')}</Text>
           </Box>
-          <IconButton
-            accessibilityLabel="Edit"
-            icon="edit"
-            iconColor="white"
-            size="sm"
-            onClick={this.toggleModal.bind(this)}
-          />
+          <Link to={`/edit/daily/${dateStr}`}>
+            <IconButton
+              accessibilityLabel="edit"
+              icon="edit"
+              iconColor="red"
+              size="sm"
+            />
+          </Link>
         </Box>
         <Box color="white" padding={2}>
           {this.drawEntryContent(entry)}

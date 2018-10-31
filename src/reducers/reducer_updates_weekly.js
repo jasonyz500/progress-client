@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { FETCH_UPDATES_WEEKLY } from '../actions';
+import { FETCH_UPDATES_WEEKLY, POST_UPDATES_WEEKLY } from '../actions';
 
 export default function(state = {}, action) {
   switch (action.type) {
@@ -43,6 +43,8 @@ export default function(state = {}, action) {
         res[update.date_string].push(update);
       }
       return _.assign(_.cloneDeep(state), res);
+    case POST_UPDATES_WEEKLY:
+      break;
     default:
       return state;
   }

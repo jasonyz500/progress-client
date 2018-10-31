@@ -4,14 +4,15 @@ import { Box, Button, Column, Divider, Heading, IconButton, Label, Text, TextAre
 import _ from 'lodash';
 import moment from 'moment';
 import { WithContext as ReactTags } from 'react-tag-input';
-import { getDisplayTitle } from '../common/utils';
 import { fetchEntriesDaily, createEntry, updateEntry, getTags } from '../../actions';
 
 class EditDailyEntry extends Component {
   constructor(props) {
     super(props);
+    const { dateStr } = props.match.params;
     this.state = {
-      dateStr: props.match.params.dateStr
+      dateStr: dateStr,
+      entry: newEntry(dateStr)
     }
   }
 
@@ -23,6 +24,68 @@ class EditDailyEntry extends Component {
   componentWillReceiveProps(nextProps) {
     this.setState(prevState => ({ entry: nextProps.entry }));
   }
+
+  // mood section
+  renderMoodSection(entry) {
+    return (
+      <Column span={12}>
+        <Box paddingY={2} paddingX={4} display="flex" alignItems="center">
+          <Column span={4}>
+            <Label htmlFor="mood_score">
+              <Text align="left" bold>Mood Score</Text>
+            </Label>
+          </Column>
+          <Column span={8}>
+            <Box display="flex" direction="row">
+            {
+              [...Array(5).keys()].map(i => (
+                <IconButton
+                  key={i}
+                  accessibilityLabel={`Select ${i+1} Stars`}
+                  icon="smiley-outline"
+                  iconColor={entry.mood_score > i ? 'red' : 'gray'}
+                  onClick={() => this.handleMoodSelect(i+1)}
+                />
+              ))
+            }
+            </Box>
+          </Column>
+        </Box>
+        <Box paddingY={2} paddingX={4} display="flex" alignItems="center">
+          <Column span={4}>
+            <Label htmlFor="mood_reason">
+              <Text align="left" bold>Mood Reason</Text>
+            </Label>
+          </Column>
+          <Column span={8}>
+            <TextArea
+              id="mood_reason"
+              onChange={this.handleMoodReason.bind(this)}
+              value={entry.mood_reason}
+              placeholder="Describe your mood"
+              rows={2}
+            />
+          </Column>
+        </Box>
+      </Column>
+    );
+  }
+
+  handleMoodSelect(mood) {
+    const { entry } = this.state;
+    entry.mood_score = mood;
+    this.setState(prevState => ({ entry }));
+  }
+
+  handleMoodReason({ value }) {
+    const { entry } = this.state;
+    entry.mood_reason = value;
+    this.setState(prevState => ({ entry }));
+  }
+
+  // end mood section
+
+  // update section
 
   drawUpdate(update, idx) {
     const tags = _.map(update.tags, tag => ({ text: tag.tag, id: tag.tag }));
@@ -37,7 +100,7 @@ class EditDailyEntry extends Component {
           <Column span={8}>
             <TextArea 
               id={`update${idx}`}
-              value={this.props.updates[idx].body}
+              value={update.body}
               onChange={(e) => this.handleChangeUpdate(e.value, idx)}
             />
           </Column>
@@ -71,48 +134,50 @@ class EditDailyEntry extends Component {
   }
 
   addUpdate() {
-    const { updates } = this.state;
-    updates.push({
+    const { entry } = this.state;
+    entry.updates.push({
       body: '',
       tags: []
     });
-    this.setState(prevState => ({ updates }));    
+    this.setState(prevState => ({ entry }));    
   }
 
   handleChangeUpdate(body, idx) {
-    const { updates } = this.state;
-    updates[idx].body = body;
-    this.setState(prevState => ({ updates }));
+    const { entry } = this.state;
+    entry.updates[idx].body = body;
+    this.setState(prevState => ({ entry }));
   }
 
   removeUpdate(idx) {
-    let { updates } = this.state;
-    updates = updates.filter((update, i) => i !== idx)
-    this.setState(prevState => ({ updates }));
+    let { entry } = this.state;
+    entry.updates = entry.updates.filter((update, i) => i !== idx)
+    this.setState(prevState => ({ entry }));
   }
 
   handleAddTag(tag, idx) {
-    let { updates } = this.state;
-    updates[idx].tags.push({ tag: tag.text, id: tag.text });
-    this.setState(prevState => ({ updates }));
+    let { entry } = this.state;
+    entry.updates[idx].tags.push({ tag: tag.text, id: tag.text });
+    this.setState(prevState => ({ entry }));
   }
 
   handleDeleteTag(tagIdx, updateIdx) {
-    const { updates } = this.state;
-    updates[updateIdx].tags = updates[updateIdx].tags.filter((tag, i) => i !== tagIdx);
-    this.setState(prevState => ({ updates }));
+    const { entry } = this.state;
+    entry.updates[updateIdx].tags = entry.updates[updateIdx].tags.filter((tag, i) => i !== tagIdx);
+    this.setState(prevState => ({ entry }));
   }
 
+  // end update section
+
   leavePageFn() {
-    this.props.history.length ? this.props.history.goBack() : this.props.history.push('/weekly');
+    this.props.history.push(`/weekly/${moment(this.state.dateStr).startOf('isoWeek').format('YYYY-MM-DD')}`);
   }
 
   handleSave() {
-    const { entry, dateStr } = this.state;
+    const { entry } = this.state;
     if (entry.id) {
-      this.props.updateEntry(dateStr, entry, this.leavePageFn.bind(this));
+      this.props.updateEntry(entry, this.leavePageFn.bind(this));
     } else {
-      this.props.createEntry(dateStr, entry, this.leavePageFn.bind(this));
+      this.props.createEntry(entry, this.leavePageFn.bind(this));
     }
   }
 
@@ -125,9 +190,14 @@ class EditDailyEntry extends Component {
     return (
       <Box>
         <Box margin={4} display="flex" direction="row" alignItems="center" alignContent="center">
-          <Heading size="xs">{'Edit Daily Updates: ' + moment(dateStr).format('dddd, MMMM Do')}</Heading>
+          <Heading size="xs">{'Edit Daily Entry: ' + moment(dateStr).format('dddd, MMMM Do')}</Heading>
         </Box>
         <Divider />
+        {this.renderMoodSection(entry)}
+        <Divider />
+        <Box margin={4} display="flex" direction="row" alignItems="center" alignContent="center">
+          <Heading size="xs">Project Updates</Heading>
+        </Box>
         {_.map(entry.updates, (update, i) => this.drawUpdate(update, i))}
         <Box margin={3} display="flex" direction="row" alignItems="center" alignContent="center">
           <Text align="left" bold>Add an Update</Text>
@@ -161,16 +231,20 @@ class EditDailyEntry extends Component {
 }
 
 function mapStateToProps({ daily_entries, tags }, ownProps) {
-  const { dateStr } = ownProps;
+  const { dateStr } = ownProps.match.params;
   return {
-    entry: daily_entries[dateStr] || {
-      date_string: dateStr,
-      mood_score: 0,
-      mood_reason: '',
-      updates: []
-    },
+    entry: daily_entries[dateStr] || newEntry(dateStr),
     tags: _.map(tags, (tag) => ({ id: tag, text: tag }))
   }
+}
+
+function newEntry(dateStr) {
+  return {
+    date_string: dateStr,
+    mood_score: 0,
+    mood_reason: '',
+    updates: []
+  };
 }
 
 export default connect(mapStateToProps, { fetchEntriesDaily, createEntry, updateEntry, getTags })(EditDailyEntry);
