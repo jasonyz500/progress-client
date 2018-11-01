@@ -27,7 +27,7 @@ export class Navigation extends Component {
         </Nav>
         <Nav pullRight>
           <NavDropdown title="Settings" id="user-dropdown">
-            <MenuItem>My Profile</MenuItem>
+            <MenuItem href='/profile'>My Profile</MenuItem>
             <MenuItem divider />
             <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
           </NavDropdown>
