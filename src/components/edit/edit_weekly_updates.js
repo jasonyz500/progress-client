@@ -25,6 +25,7 @@ class EditWeeklyUpdates extends Component {
   }
 
   drawUpdate(update, idx) {
+    console.log('update', update);
     const tags = _.map(update.tags, tag => ({ text: tag.tag, id: tag.tag }));
     return (
       <Box key={idx}>
@@ -95,12 +96,14 @@ class EditWeeklyUpdates extends Component {
     let { updates } = this.state;
     updates[idx].tags.push({ tag: tag.text, id: tag.text });
     this.setState(prevState => ({ updates }));
+    console.log(tag, this.state);
   }
 
   handleDeleteTag(tagIdx, updateIdx) {
     const { updates } = this.state;
     updates[updateIdx].tags = updates[updateIdx].tags.filter((tag, i) => i !== tagIdx);
     this.setState(prevState => ({ updates }));
+    console.log(tagIdx, this.state);
   }
 
   leavePageFn() {

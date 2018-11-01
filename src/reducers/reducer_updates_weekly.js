@@ -25,11 +25,11 @@ export default function(state = {}, action) {
             id: row.updateid,
             date_string: row.date_string,
             body: row.body,
-            tags: [{
-              id: row.tagid,
-              tag: row.tag
-            }]
+            tags: []
           };
+          if (row.tagid && row.tag) {
+            update.tags.push({ id: row.tagid, tag: row.tag });
+          }
           updates[row.updateid] = update;
         } else {
           updates[row.updateid].tags.push({ id: row.tagid, tag: row.tag });
@@ -44,7 +44,7 @@ export default function(state = {}, action) {
       }
       return _.assign(_.cloneDeep(state), res);
     case POST_UPDATES_WEEKLY:
-      break;
+      return state;
     default:
       return state;
   }

@@ -31,11 +31,11 @@ export default function(state = {}, action) {
           const update = {
             id: row.updateid,
             body: row.body,
-            tags: [{
-              id: row.tagid,
-              tag: row.tag
-            }]
+            tags: []
           };
+          if (row.tagid && row.tag) {
+            update.tags.push({ id: row.tagid, tag: row.tag });
+          }
           updates[row.updateid] = update;
         } else {
           updates[row.updateid].tags.push({ id: row.tagid, tag: row.tag });
