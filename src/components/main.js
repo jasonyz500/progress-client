@@ -13,7 +13,7 @@ const Main = () => ( // todo: add validation for edit/weekly/:weekStr param
     <Switch>
       <Route exact path='/' component={Weekly}/>
       <Route path='/weekly/:weekStr?' component={Weekly}/>
-      <Route path='/monthly' component={Monthly}/>
+      <Route path='/monthly/:monthStr?' component={Monthly}/>
       <Route path='/yearly' component={Yearly}/>
       <Route path='/login' component={Login}/>
       <Route path='/edit/weekly/:weekStr' component={EditWeeklyUpdates}/>

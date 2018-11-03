@@ -38,7 +38,9 @@ class Monthly extends Component {
   }
 
   setNewMonthState(monthStr) {
-    this.setState(prevState => ({ monthStr: monthStr }))
+    const newState = this.state;
+    newState.monthStr = monthStr;
+    this.setState(newState);
     this.fetchData();
   }
 

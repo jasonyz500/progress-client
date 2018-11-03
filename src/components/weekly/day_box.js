@@ -68,7 +68,7 @@ class DayBox extends Component {
             <IconButton
               accessibilityLabel="edit"
               icon="edit"
-              iconColor="red"
+              iconColor="white"
               size="sm"
             />
           </Link>
