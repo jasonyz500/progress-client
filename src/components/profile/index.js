@@ -6,7 +6,7 @@ class Profile extends Component {
 	render() {
 		return (
 			<Box>
-				<Heading>Profile Page Coming Soon</Heading>
+				<Heading>Profile Page Coming Soon!</Heading>
 			</Box>
 		);
 	}
