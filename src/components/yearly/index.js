@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Box, Column, Heading, Text } from 'gestalt';
+import { getWeeklyTags } from '../../actions/';
 import _ from 'lodash';
+import moment from 'moment';
 
 const fakeData = {
   projects: [
@@ -29,6 +31,24 @@ class Yearly extends Component {
   constructor(props) {
     super(props);
     this.state = fakeData;
+  }
+
+  componentDidMount() {
+    const yearStr = this.props.match.params.yearStr || moment().format('YYYY');
+    this.setNewState(yearStr);
+  }
+
+  setNewState(yearStr) {
+    const newState = this.state;
+    newState.yearStr = yearStr;
+    this.setState(newState);
+    this.fetchData();
+  }
+
+  fetchData() {
+    const startDate = moment().year(this.state.yearStr).startOf('year').startOf('isoWeek').format('YYYY-MM-DD');
+    const endDate = moment().year(this.state.yearStr).endOf('year').endOf('isoWeek').format('YYYY-MM-DD');
+    this.props.getWeeklyTags(startDate, endDate);
   }
 
   drawProjects(data) {
@@ -112,8 +132,8 @@ class Yearly extends Component {
   }
 }
 
-function mapStateToProps() {
-
+function mapStateToProps(state, ownProps) {
+  return state;
 }
 
-export default connect(mapStateToProps)(Yearly);
+export default connect(mapStateToProps, { getWeeklyTags })(Yearly);

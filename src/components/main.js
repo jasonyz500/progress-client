@@ -14,7 +14,7 @@ const Main = () => ( // todo: add validation for edit/weekly/:weekStr param
       <Route exact path='/' component={Weekly}/>
       <Route path='/weekly/:weekStr?' component={Weekly}/>
       <Route path='/monthly/:monthStr?' component={Monthly}/>
-      <Route path='/yearly' component={Yearly}/>
+      <Route path='/yearly/:yearStr?' component={Yearly}/>
       <Route path='/login' component={Login}/>
       <Route path='/edit/weekly/:weekStr' component={EditWeeklyUpdates}/>
       <Route path='/edit/daily/:dateStr' component={EditDailyEntry}/>
