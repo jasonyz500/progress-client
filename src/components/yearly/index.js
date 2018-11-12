@@ -24,13 +24,15 @@ const fakeData = {
     [{ name: "Hackathon", start: 0, end: 3 }, { name: "", start: 4, end: 12 }],
     []
   ],
-  currentWeek: 29
+  currentWeek: 29,
+  yearStr: ''
 };
 
 class Yearly extends Component {
   constructor(props) {
     super(props);
     this.state = fakeData;
+    this.state.yearStr = props.match.params.yearStr || moment().format('YYYY');
   }
 
   componentDidMount() {
@@ -49,6 +51,49 @@ class Yearly extends Component {
     const startDate = moment().year(this.state.yearStr).startOf('year').startOf('isoWeek').format('YYYY-MM-DD');
     const endDate = moment().year(this.state.yearStr).endOf('year').endOf('isoWeek').format('YYYY-MM-DD');
     this.props.getWeeklyTags(startDate, endDate);
+  }
+
+  processRow(row) {
+    /* 
+      row has structure like this:
+      row = [
+        {
+          date_string:
+          tags: []
+        }, ..., {}
+      ]
+    */
+    function isContinued(first, second) {
+      return moment(first).add(1, 'week').isSame(second);
+    }
+
+    const res = [];
+    let curr = {};
+    let nextCurr = {};
+    // go through row
+    for (const week of row) {
+      for (const tag of week) {
+        // if this tag exists in curr and should be extended to current week
+        // we will delete it from curr map and add it to new curr map
+        if (curr[tag] && isContinued(curr[tag][1], week.date_string)) {
+          nextCurr[tag] = curr[tag];
+          nextCurr[tag][1] = week.date_string;
+          delete curr[tag];
+        }
+      }
+      // take the leftovers of curr and add them to res, then swap curr and nextCurr
+      for (const tag in curr) {
+        res.push({
+          tag: tag,
+          start: curr[tag][0],
+          end: curr[tag][1]
+        });
+      }
+      curr = nextCurr;
+      nextCurr = {};
+    }
+    // finally process the last elements in curr
+    return res;
   }
 
   drawProjects(data) {
@@ -92,15 +137,15 @@ class Yearly extends Component {
     ));
   }
 
-  drawQuarter(quarter, projects) {
-    const { currentWeek } = this.state;
+  drawQuarter(row, quarter) {
+    const projects = this.state.projects[quarter];
     return (
       <Box margin={1} padding={1} key={quarter}>
         <Box display="flex" direction="row">
           {
-            Array(13).fill().map((_, i) => {
-              const thisWeek = quarter * 13 + i;
-              const color = thisWeek < currentWeek ? "midnight" : (thisWeek > currentWeek ? "blue" : "watermelon")
+            row.map((date, i) => {
+              const currentWeek = moment().startOf('isoWeek');
+              const color = date < currentWeek ? 'midnight' : (date > currentWeek ? 'blue' : 'watermelon');
               return (
                 <Column span={1} key={i}>
                   <Box shape="circle" height={45} width={45} color={color}></Box>
@@ -117,14 +162,24 @@ class Yearly extends Component {
   }
 
   render() {
+    const rows = [];
+    const runner = moment().year(this.state.yearStr).startOf('year').startOf('isoWeek');
+    _.forEach(Array(4).fill(), (i) => {
+      const row = [];
+      _.forEach(Array(13).fill(), (j) => {
+        row.push(_.cloneDeep(runner));
+        runner.add(1, 'week');
+      });
+      rows.push(row);
+    });
     return (
       <Box>
         <Box display="flex" direction="row" margin={2}>
           <Heading size="sm">{"We Are "}</Heading>&nbsp;<Heading size="sm" color="watermelon">Here</Heading>
         </Box>
         {
-          Array(4).fill().map((_, i) => (
-            this.drawQuarter(i, this.state.projects[i])
+          rows.map((row, i) => (
+            this.drawQuarter(row, i)
           ))
         }
       </Box>
@@ -132,8 +187,8 @@ class Yearly extends Component {
   }
 }
 
-function mapStateToProps(state, ownProps) {
-  return state;
+function mapStateToProps({ weekly_tags }, ownProps) {
+  return { weekly_tags };
 }
 
 export default connect(mapStateToProps, { getWeeklyTags })(Yearly);
