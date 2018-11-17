@@ -53,80 +53,12 @@ class Yearly extends Component {
     this.props.getWeeklyTags(startDate, endDate);
   }
 
-  processRow(row) {
-    /* 
-      row has structure like this:
-      row = [
-        {
-          date_string:
-          tags: []
-        }, ..., {}
-      ]
-    */
-    function isContinued(first, second) {
-      return moment(first).add(1, 'week').isSame(second);
-    }
-
-    const res = [];
-    let curr = {};
-    let nextCurr = {};
-    // go through row
-    for (const week of row) {
-      for (const tag of week) {
-        // if this tag exists in curr and should be extended to current week
-        // we will delete it from curr map and add it to new curr map
-        if (curr[tag] && isContinued(curr[tag][1], week.date_string)) {
-          nextCurr[tag] = curr[tag];
-          nextCurr[tag][1] = week.date_string;
-          delete curr[tag];
-        }
-      }
-      // take the leftovers of curr and add them to res, then swap curr and nextCurr
-      for (const tag in curr) {
-        res.push({
-          tag: tag,
-          start: curr[tag][0],
-          end: curr[tag][1]
-        });
-      }
-      curr = nextCurr;
-      nextCurr = {};
-    }
-    // finally process the last elements in curr
-    return res;
-  }
-
-  drawProjects(data) {
-    /*
-      draw projects for each row (quarter)
-      collect information into this format:
-        rows = [
-          [
-            {
-              name: "some or no content",
-              start: 0,
-              end: 2
-            },
-            {... next pill in this row ...}
-          ],
-          [... second row ...]
-        ]
-      i would write a sexy algorithm for this but i can't be bothered for this hackathon
-    */
-
-    let rows = [];
-    // LOL
-    if (data.length < 6) {
-      rows.push(data);
-    } else {
-      rows.push(data.slice(0, 4));
-      rows.push(data.slice(4, 7));
-    }
+  drawProjects(rows) {
     return _.map(rows, (row, i) => (
       <Box display="flex" direction="row" key={i}>
         {
           _.map(row, pill => (
-            <Column span={pill.end - pill.start + 1} key={`${pill.start}-${pill.end}`}>
+            <Column span={pill.end - pill.start + 1} key={`${i}.${pill.start}.${pill.end}`}>
               <Box shape="pill" color={pill.name ? "lightGray" : "transparent"} marginTop={1} padding={1}>
                 <Text align="center">{pill.name}</Text>
               </Box>
@@ -137,8 +69,106 @@ class Yearly extends Component {
     ));
   }
 
+  // this function draws the dots for the quarter and also the box layer underneath that holds the tags
   drawQuarter(row, quarter) {
-    const projects = this.state.projects[quarter];
+    const { weekly_tags } = this.props;
+
+    /*
+      group tags for this quarter (row) into this format:
+      [{ name: tag, start: idx, end: idx }, {...}, ...]
+    */
+    function groupTags() {
+      const res = [];
+      let curr = {};
+      // iterate over each week in the row and get all tags for that week from global state
+      _.forEach(row, (weekMoment, idx) => {
+        const weekStr = weekMoment.format('YYYY-MM-DD');
+        for (const tag of weekly_tags[weekStr] || []) {
+          // either update curr map with current week as last seen date, or add the tag as a new entry
+          if (curr[tag]) {
+            curr[tag][1] = idx;
+          } else {
+            curr[tag] = [idx, idx];
+          }
+        }
+        // purge curr map of any tags that weren't extended into this week and add them to res
+        for (const tag in curr) {
+          if (curr[tag][1] !== idx) {
+            res.push({
+              name: tag,
+              start: curr[tag][0],
+              end: curr[tag][1]
+            });
+            delete curr[tag];
+          }
+        }
+      });
+      return res;
+    }
+
+    /*
+      for each quarter, take the tags and slot them into as few rows as possible where no row has any overlap
+      input: [{ name: name, start: idx, end: idx }, {...}, ...]
+      output: [ [{...}, {...}], [{...}, ...] ]
+      current implementation is, for each new bubble, slot it into the first available row
+    */
+    function organizeGroupedTags(groupedTags) {
+      const res = [];
+      for (const tag of groupedTags) {
+        let pushed = false;
+        for (const row of res) {
+          if (row[row.length-1].end < tag.start) {
+            row.push(tag);
+            pushed = true;
+            break;
+          }
+        }
+        // if we haven't yet slotted it into an existing row, create a new one
+        if (!pushed) {
+          res.push([tag]);
+          pushed = false;
+        }
+      }
+      return res;
+    }
+
+    /*
+      fill in gaps
+      just go through bubbles and add empty bubbles where needed
+    */
+    function fillBlanks(bubbleRows) {
+      const res = [];
+      for (const row of bubbleRows) {
+        const inner = [];
+        let currIndex = 0;
+        for (const bubble of row) {
+          if (bubble.start !== currIndex) {
+            // push a blank bubble
+            inner.push({
+              name: '',
+              start: currIndex,
+              end: bubble.start - 1
+            });
+          }
+          inner.push(bubble);
+          currIndex = bubble.end + 1;
+        }
+        if (currIndex !== 13) {
+          inner.push({
+            name: '',
+            start: currIndex,
+            end: 12
+          });
+        }
+        res.push(inner);
+      }
+      return res;
+    }
+
+    const groupedTags = groupTags();
+    const organizedTags = organizeGroupedTags(groupedTags);
+    const bubbles = fillBlanks(organizedTags);
+
     return (
       <Box margin={1} padding={1} key={quarter}>
         <Box display="flex" direction="row">
@@ -155,7 +185,7 @@ class Yearly extends Component {
           }
         </Box>
         {
-          this.drawProjects(projects)
+          this.drawProjects(bubbles)
         }
       </Box>
     );
