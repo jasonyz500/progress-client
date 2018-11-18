@@ -1,32 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Box, Column, Heading, Text } from 'gestalt';
+import { Box, Column, Flyout, Heading, Text } from 'gestalt';
 import { getWeeklyTags } from '../../actions/';
 import _ from 'lodash';
 import moment from 'moment';
-
-const fakeData = {
-  projects: [
-    [
-      { name: "", start: 0, end: 0 },
-      { name: "Spark event job", start: 1, end: 3 },
-      { name: "Spark agg job", start: 4, end: 7 },
-      { name: "Spark debugging", start: 8, end: 12 },
-      { name: "", start: 0, end: 5 },
-      { name: "Sideswipe experiment", start: 6, end: 9 },
-      { name: "", start: 10, end: 12 },
-    ],
-    [
-      { name: "Spark pipeline productionization", start: 0, end: 3 },
-      { name: "Moat video development", start: 4, end: 7 },
-      { name: "'True' - Collins 'I am Collins' Chung", start: 8, end: 12 },
-    ],
-    [{ name: "Hackathon", start: 0, end: 3 }, { name: "", start: 4, end: 12 }],
-    []
-  ],
-  currentWeek: 29,
-  yearStr: ''
-};
 
 class Yearly extends Component {
   constructor(props) {
@@ -51,22 +28,6 @@ class Yearly extends Component {
     const startDate = moment().year(this.state.yearStr).startOf('year').startOf('isoWeek').format('YYYY-MM-DD');
     const endDate = moment().year(this.state.yearStr).endOf('year').endOf('isoWeek').format('YYYY-MM-DD');
     this.props.getWeeklyTags(startDate, endDate);
-  }
-
-  drawProjects(rows) {
-    return _.map(rows, (row, i) => (
-      <Box display="flex" direction="row" key={i}>
-        {
-          _.map(row, pill => (
-            <Column span={pill.end - pill.start + 1} key={`${i}.${pill.start}.${pill.end}`}>
-              <Box shape="pill" color={pill.name ? "lightGray" : "transparent"} marginTop={1} padding={1}>
-                <Text align="center">{pill.name}</Text>
-              </Box>
-            </Column>
-          ))
-        }
-      </Box>
-    ));
   }
 
   // this function draws the dots for the quarter and also the box layer underneath that holds the tags
@@ -184,11 +145,25 @@ class Yearly extends Component {
             })
           }
         </Box>
-        {
-          this.drawProjects(bubbles)
-        }
+        { this.drawProjects(bubbles) }
       </Box>
     );
+  }
+
+  drawProjects(rows) {
+    return _.map(rows, (row, i) => (
+      <Box display="flex" direction="row" key={i}>
+        {
+          _.map(row, pill => (
+            <Column span={pill.end - pill.start + 1} key={`${i}.${pill.start}.${pill.end}`}>
+              <Box shape="pill" color={pill.name ? "lightGray" : "transparent"} marginTop={1} padding={1}>
+                <Text align="center">{pill.name}</Text>
+              </Box>
+            </Column>
+          ))
+        }
+      </Box>
+    ));
   }
 
   render() {
