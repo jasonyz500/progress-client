@@ -10,7 +10,6 @@ class PillFlyout extends Component {
   }
 
   _handleClick() {
-    console.log('asdf');
     this.setState(() => ({ open: !this.state.open }));
   }
   _handleDismiss() {
@@ -18,7 +17,12 @@ class PillFlyout extends Component {
   }
 
   fillPillText(pill) {
-    
+    const size = 8*(pill.end - pill.start) + 5;
+    const len = pill.name.length;
+    if (size >= len) {
+      return pill.name;
+    }
+    return `${pill.name.slice(0, size)}...`;
   }
 
 	render() {
@@ -26,20 +30,21 @@ class PillFlyout extends Component {
 		return (
       <Box>
         <div
-          style={{ display: "inline-block" }}
           ref={c => {
             this.anchor = c;
           }}
         >
+        {pill.name &&
           <Touchable
             onTouch={this.handleClick}
           >
-            <Box shape="pill" color={pill.name ? "lightGray" : "transparent"} marginTop={1} padding={1}>
-                <Text align="center" onClick={this.handleClick}>{pill.name}</Text>
+            <Box flex="grow" shape="pill" color="lightGray" marginTop={1} padding={1}>
+                <Text align="center">{this.fillPillText(pill)}</Text>
             </Box>
           </Touchable>
+        }
         </div>
-        {this.state.open &&
+        {this.state.open && pill.name && 
           <Flyout
             anchor={this.anchor}
             idealDirection="up"
