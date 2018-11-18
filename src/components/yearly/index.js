@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Box, Column, Flyout, Heading, Text } from 'gestalt';
-import { getWeeklyTags } from '../../actions/';
+import { Box, Column, Heading } from 'gestalt';
 import _ from 'lodash';
 import moment from 'moment';
+import PillFlyout from './pill-flyout';
+import { getWeeklyTags } from '../../actions/';
 
 class Yearly extends Component {
   constructor(props) {
     super(props);
-    this.state = fakeData;
-    this.state.yearStr = props.match.params.yearStr || moment().format('YYYY');
+    this.state = {
+      yearStr: props.match.params.yearStr || moment().format('YYYY')
+    };
   }
 
   componentDidMount() {
@@ -156,9 +158,7 @@ class Yearly extends Component {
         {
           _.map(row, pill => (
             <Column span={pill.end - pill.start + 1} key={`${i}.${pill.start}.${pill.end}`}>
-              <Box shape="pill" color={pill.name ? "lightGray" : "transparent"} marginTop={1} padding={1}>
-                <Text align="center">{pill.name}</Text>
-              </Box>
+              <PillFlyout pill={pill}/>
             </Column>
           ))
         }
