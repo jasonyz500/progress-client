@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Box, Column, Divider, Heading, IconButton, Label, Text, TextField } from 'gestalt';
+import { Box, Button, Column, Divider, Heading, IconButton, Label, Text, TextField } from 'gestalt';
 import { getProfile } from '../../actions';
 
 class Profile extends Component {
@@ -16,15 +16,11 @@ class Profile extends Component {
     this.props.getProfile();
   }
 
-  handleEditEmail() {
-
-  }
-
   handleEditPassword() {
 
   }
 
-  handleEncryption() {
+  handleAddEncryption() {
 
   }
 
@@ -53,12 +49,6 @@ class Profile extends Component {
                     value={user.email}
                   />
                 </Box>
-                <IconButton
-                  accessibilityLabel="Edit Email"
-                  icon="edit"
-                  iconColor="red"
-                  onClick={this.handleEditEmail}
-                />
               </Box>
             </Column>
           </Box>
@@ -91,7 +81,14 @@ class Profile extends Component {
           </Box>
           <Divider />
           <Box padding={2}><Heading size="xs">Encryption</Heading></Box>
-
+          {!user.is_encryption_enabled && (
+            <Button
+              text="Add E2E Encryption"
+              onClick={this.handleAddEncryption}
+              color="red"
+              inline
+            />
+          )}
         </Column>
 			</Box>
 		);

@@ -50,7 +50,9 @@ class PillFlyout extends Component {
             idealDirection="up"
             onDismiss={this.handleDismiss}
           >
-            <Text>{pill.name}</Text>
+            <Box padding={2}>
+              <Text>{pill.name}</Text>
+            </Box>
           </Flyout>
         }
       </Box>
