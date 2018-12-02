@@ -5,18 +5,22 @@ import _ from 'lodash';
 import moment from 'moment';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { getDisplayTitle } from '../common/utils';
-import { fetchUpdatesWeekly, postUpdatesWeekly, getTags } from '../../actions';
+import { fetchUpdatesWeekly, postUpdatesWeekly, getTags, fetchEntriesDaily } from '../../actions';
+import DayBox from '../weekly/day_box';
 
 class EditWeeklyUpdates extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      weekStr: moment(props.match.params.weekStr).startOf('isoWeek').format('YYYY-MM-DD')
+      weekStr: moment(props.match.params.weekStr).startOf('isoWeek').format('YYYY-MM-DD'),
+      showDailyEntries: false
     }
   }
 
   componentWillMount() {
-    this.props.fetchUpdatesWeekly(this.state.weekStr, this.state.weekStr);
+    const weekStr = this.state.weekStr;
+    this.props.fetchUpdatesWeekly(weekStr, weekStr);
+    this.props.fetchEntriesDaily(weekStr, moment(weekStr).endOf('isoWeek').format('YYYY-MM-DD'));
     this.props.getTags();
   }
 
@@ -119,6 +123,26 @@ class EditWeeklyUpdates extends Component {
     this.leavePageFn();
   }
 
+  toggleDailyEntries() {
+    this.setState(prevState => ({ showDailyEntries: !prevState.showDailyEntries }));
+  }
+
+  drawDailyEntries() {
+    const { weekStr } = this.state;
+    const weekEnd = moment(weekStr).add(4, 'days');
+    const days = [...Array(5).keys()].map(i => ( moment(weekEnd).subtract(i, 'days').format('YYYY-MM-DD')) );
+    return (
+      <Box padding={1}>
+        {days.map(day => (
+          <DayBox
+            key={day}
+            dateStr={day}
+          />
+        ))}
+      </Box>
+    );
+  }
+
   render() {
     const { weekStr, updates } = this.state;
     return (
@@ -139,7 +163,13 @@ class EditWeeklyUpdates extends Component {
           />
         </Box>
         <Divider />
-        <Box padding={1} display="flex" direction="row" justifyContent="end" right>
+        <Box padding={1} display="flex" direction="row">
+          <Button 
+            text={this.state.showDailyEntries ? "Hide Daily Entries" : "Show Daily Entries"}
+            onClick={this.toggleDailyEntries.bind(this)}
+            inline
+          />
+          <Box flex="grow"></Box>
           <Box marginRight={1}>
             <Button
               text="Cancel"
@@ -154,6 +184,9 @@ class EditWeeklyUpdates extends Component {
             inline
           />
         </Box>
+        {
+          this.state.showDailyEntries && this.drawDailyEntries()
+        }
       </Box>
     );
   }
@@ -169,4 +202,4 @@ function mapStateToProps({ weekly_updates, tags }, ownProps) {
 
 }
 
-export default connect(mapStateToProps, { fetchUpdatesWeekly, postUpdatesWeekly, getTags })(EditWeeklyUpdates);
+export default connect(mapStateToProps, { fetchUpdatesWeekly, postUpdatesWeekly, getTags, fetchEntriesDaily })(EditWeeklyUpdates);

@@ -24,11 +24,16 @@ class Profile extends Component {
 
   }
 
+  handleEncryption() {
+
+  }
+
 	render() {
     const { user } = this.props;
 		return (
 			<Box>
-				<Heading>Profile Page Coming Soon!</Heading>
+				<Box padding={2}><Heading size="sm">Account Settings</Heading></Box>
+        <Divider />
         <Column span={12}>
           <Box paddingY={2} paddingX={4} display="flex" alignItems="center">
             <Column span={4}>
@@ -85,6 +90,7 @@ class Profile extends Component {
             </Column>
           </Box>
           <Divider />
+          <Box padding={2}><Heading size="xs">Encryption</Heading></Box>
 
         </Column>
 			</Box>

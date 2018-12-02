@@ -1,7 +1,6 @@
 # progress-client
 
 next features
-yearly view bubble compression for short bubbles
 yearly view weekly mood coloring for all circles
 weekly view mouseover for more information
 add calendar (better date selection) to weekly/monthly views
