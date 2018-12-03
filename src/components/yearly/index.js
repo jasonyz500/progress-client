@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Box, Column, Heading } from 'gestalt';
 import _ from 'lodash';
 import moment from 'moment';
-import PillFlyout from './pill-flyout';
+import PillFlyout from './pill_flyout';
 import { getWeeklyTags } from '../../actions/';
 
 class Yearly extends Component {
