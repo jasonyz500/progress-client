@@ -16,8 +16,8 @@ class Profile extends Component {
     this.props.getProfile();
   }
 
-  handleEditPassword() {
-
+  toggleEditPassword() {
+    this.setState(() => ({ showEditPassword: !this.state.showEditPassword }));
   }
 
   handleAddEncryption() {
@@ -72,11 +72,22 @@ class Profile extends Component {
                 </Box>
                 <IconButton
                   accessibilityLabel="Edit Email"
-                  icon="edit"
+                  icon={this.state.showEditPassword ? "cancel" : "edit"}
                   iconColor="red"
-                  onClick={this.handleEditPassword}
+                  onClick={this.toggleEditPassword.bind(this)}
                 />
               </Box>
+              {this.state.showEditPassword && (
+                <Box>
+                  <Column span={4}>
+                    <Label htmlFor="currPassword">
+                      <Text align="left" bold>Current Password</Text>
+                    </Label>
+                  </Column>
+                  <Column span={8}>
+                  </Column>
+                </Box>
+              )}
             </Column>
           </Box>
           <Divider />
