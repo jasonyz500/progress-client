@@ -7,6 +7,9 @@ class Profile extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      user: {
+        email: ''
+      },
       showEditEmail: false,
       showEditPassword: false
     }
@@ -16,8 +19,17 @@ class Profile extends Component {
     this.props.getProfile();
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState(prevState => ({ user: nextProps.user }));
+  }
+
   toggleEditPassword() {
     this.setState(() => ({ showEditPassword: !this.state.showEditPassword }));
+  }
+
+  handleEditPassword(data) {
+    console.log(data);
+    alert('Not yet implemented');
   }
 
   handleAddEncryption() {
@@ -25,7 +37,7 @@ class Profile extends Component {
   }
 
 	render() {
-    const { user } = this.props;
+    const { user } = this.state;
 		return (
 			<Box>
 				<Box padding={2}><Heading size="sm">Account Settings</Heading></Box>
@@ -78,15 +90,93 @@ class Profile extends Component {
                 />
               </Box>
               {this.state.showEditPassword && (
-                <Box>
+              <Box color="lightWash" paddingY={2} paddingX={4}>
+              <form onSubmit={this.handleEditPassword.bind(this)}>
+                <Box paddingY={2} display="flex" alignItems="center">
                   <Column span={4}>
-                    <Label htmlFor="currPassword">
-                      <Text align="left" bold>Current Password</Text>
+                    <Label htmlFor="currentPassword">
+                      <Text align="left" bold>
+                        Current Password
+                      </Text>
                     </Label>
                   </Column>
                   <Column span={8}>
+                    <Box display="flex" direction="row">
+                      <Box flex="grow">
+                        <TextField
+                          id="currentPassword"
+                          type="password"
+                          onChange={() => undefined}
+                        />
+                      </Box>
+                    </Box>
                   </Column>
                 </Box>
+                <Box paddingY={2} display="flex" alignItems="center">
+                  <Column span={4}>
+                    <Label htmlFor="newPassword">
+                      <Text align="left" bold>
+                        New Password
+                      </Text>
+                    </Label>
+                  </Column>
+                  <Column span={8}>
+                    <Box display="flex" direction="row">
+                      <Box flex="grow">
+                        <TextField
+                          id="newPassword"
+                          type="password"
+                          onChange={() => undefined}
+                        />
+                      </Box>
+                    </Box>
+                  </Column>
+                </Box>
+                <Box paddingY={2} display="flex" alignItems="center">
+                  <Column span={4}>
+                    <Label htmlFor="confirmNewPassword">
+                      <Text align="left" bold>
+                        Confirm New Password
+                      </Text>
+                    </Label>
+                  </Column>
+                  <Column span={8}>
+                    <Box display="flex" direction="row">
+                      <Box flex="grow">
+                        <TextField
+                          id="confirmNewPassword"
+                          type="password"
+                          onChange={() => undefined}
+                        />
+                      </Box>
+                    </Box>
+                  </Column>
+                </Box>
+                <Divider />
+                <Box display="flex" direction="row" marginTop={2}>
+                  <Button
+                    color="white"
+                    text="Forgot Password?"
+                    inline
+                  />
+                  <Box flex="grow"></Box>
+                  <Box marginRight={1}>
+                    <Button
+                      text="Cancel"
+                      color="white"
+                      onClick={this.toggleEditPassword.bind(this)}
+                      inline
+                    />
+                  </Box>
+                  <Button
+                    text="Save"
+                    type="submit"
+                    color="red"
+                    inline
+                  />
+                </Box>
+              </form>
+              </Box>
               )}
             </Column>
           </Box>

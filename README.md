@@ -11,6 +11,7 @@ email/slack integrations
 unauth home page
 
 bug list
+daily box doesn't respect newlines in the edit page
 deleting all weekly updates, then saving doesn't save properly (actually it does, but the global state doesn't get updated properly)
 add validation to dateStr or weekStr URLs
 make text box expand as you type
