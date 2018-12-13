@@ -1,7 +1,7 @@
 import decode from 'jwt-decode';
 import axios from 'axios';
+import { ROOT_URL } from '../actions/utils';
 
-const ROOT_URL = 'http://localhost:3000';
 const CONFIG = {
   headers: {
     'Content-Type': 'application/json'
@@ -11,7 +11,7 @@ const CONFIG = {
 export default class AuthService {
   async login(email, password) {
     try {
-      const request = await axios.post(`${ROOT_URL}/login`, { email, password }, CONFIG);
+      const request = await axios.post(`${ROOT_URL}/auth/login`, { email, password }, CONFIG);
       const authToken = request.data;
       localStorage.setItem('auth_token', authToken);
       localStorage.setItem('expires_at', decode(authToken).exp);
