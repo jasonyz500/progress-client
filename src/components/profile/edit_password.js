@@ -25,7 +25,6 @@ class EditPassword extends Component {
 
   handleEditPassword(data) {
     console.log(data);
-    alert(data);
   }
 
   renderField(field) {
@@ -47,7 +46,7 @@ class EditPassword extends Component {
             <Box flex="grow">
               <TextField
                 id={field.input.name}
-                type="text"
+                type="password"
                 {...field.input}
                 value={field.input.value.value || ''}
               />
@@ -61,6 +60,7 @@ class EditPassword extends Component {
 
   render() {
     const { user } = this.state;
+    const { handleSubmit } = this.props; // included in redux-form
     return (
       <div>
       <Box paddingY={2} paddingX={4} display="flex" alignItems="center">
@@ -111,7 +111,7 @@ class EditPassword extends Component {
           </Box>
           {this.state.showEditPassword && (
           <Box color="lightWash" paddingY={2} paddingX={4}>
-          <form onSubmit={this.handleEditPassword.bind(this)}>
+          <form onSubmit={handleSubmit(this.handleEditPassword.bind(this))}>
             <Field
               label="Current Password"
               name="currentPassword"
