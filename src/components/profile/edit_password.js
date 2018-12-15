@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Field, reduxForm } from 'redux-form';
 import { Box, Button, Column, Divider, IconButton, Label, Text, TextField } from 'gestalt';
 
 class EditPassword extends Component {
@@ -24,7 +25,38 @@ class EditPassword extends Component {
 
   handleEditPassword(data) {
     console.log(data);
-    alert('Not yet implemented');
+    alert(data);
+  }
+
+  renderField(field) {
+    // delete the event field, otherwise react logs a warning about event nullification
+    delete field.input.value.event;
+    const { meta: { touched, error } } = field;
+
+    return (
+      <Box paddingY={2} display="flex" alignItems="center">
+        <Column span={4}>
+          <Label htmlFor={field.input.name}>
+            <Text align="left" bold>
+              {field.label}
+            </Text>
+          </Label>
+        </Column>
+        <Column span={8}>
+          <Box display="flex" direction="row">
+            <Box flex="grow">
+              <TextField
+                id={field.input.name}
+                type="text"
+                {...field.input}
+                value={field.input.value.value || ''}
+              />
+              {touched ? error : ''}
+            </Box>
+          </Box>
+        </Column>
+      </Box>
+    );
   }
 
   render() {
@@ -80,66 +112,21 @@ class EditPassword extends Component {
           {this.state.showEditPassword && (
           <Box color="lightWash" paddingY={2} paddingX={4}>
           <form onSubmit={this.handleEditPassword.bind(this)}>
-            <Box paddingY={2} display="flex" alignItems="center">
-              <Column span={4}>
-                <Label htmlFor="currentPassword">
-                  <Text align="left" bold>
-                    Current Password
-                  </Text>
-                </Label>
-              </Column>
-              <Column span={8}>
-                <Box display="flex" direction="row">
-                  <Box flex="grow">
-                    <TextField
-                      id="currentPassword"
-                      type="password"
-                      onChange={() => undefined}
-                    />
-                  </Box>
-                </Box>
-              </Column>
-            </Box>
-            <Box paddingY={2} display="flex" alignItems="center">
-              <Column span={4}>
-                <Label htmlFor="newPassword">
-                  <Text align="left" bold>
-                    New Password
-                  </Text>
-                </Label>
-              </Column>
-              <Column span={8}>
-                <Box display="flex" direction="row">
-                  <Box flex="grow">
-                    <TextField
-                      id="newPassword"
-                      type="password"
-                      onChange={() => undefined}
-                    />
-                  </Box>
-                </Box>
-              </Column>
-            </Box>
-            <Box paddingY={2} display="flex" alignItems="center">
-              <Column span={4}>
-                <Label htmlFor="confirmNewPassword">
-                  <Text align="left" bold>
-                    Confirm New Password
-                  </Text>
-                </Label>
-              </Column>
-              <Column span={8}>
-                <Box display="flex" direction="row">
-                  <Box flex="grow">
-                    <TextField
-                      id="confirmNewPassword"
-                      type="password"
-                      onChange={() => undefined}
-                    />
-                  </Box>
-                </Box>
-              </Column>
-            </Box>
+            <Field
+              label="Current Password"
+              name="currentPassword"
+              component={this.renderField}
+            />
+            <Field
+              label="New Password"
+              name="newPassword"
+              component={this.renderField}
+            />
+            <Field
+              label="Confirm New Password"
+              name="confirmNewPassword"
+              component={this.renderField}
+            />
             <Divider />
             <Box display="flex" direction="row" marginTop={2}>
               <Button
@@ -177,4 +164,14 @@ function mapStateToProps({ user }) {
   return { user };
 }
 
-export default connect(mapStateToProps)(EditPassword);
+function validate(values) {
+  const errors = {};
+  return errors;
+}
+
+export default reduxForm({
+  validate,
+  form: 'changePasswordForm'
+})(
+  connect(mapStateToProps)(EditPassword)
+);
