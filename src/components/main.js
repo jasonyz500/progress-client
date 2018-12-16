@@ -9,6 +9,7 @@ import EditDailyEntry from './edit/edit_daily_entry';
 import Profile from './profile';
 import PasswordReset from './login/password_reset';
 import PasswordResetDone from './login/password_reset_done';
+import PasswordResetToken from './login/password_reset_token';
 
 const Main = () => ( // todo: add validation for edit/weekly/:weekStr param
   <main>
@@ -22,6 +23,7 @@ const Main = () => ( // todo: add validation for edit/weekly/:weekStr param
       <Route path='/edit/daily/:dateStr' component={EditDailyEntry}/>
       <Route path='/profile' component={Profile}/>
       <Route path='/password_reset/done' component={PasswordResetDone}/>
+      <Route path='/password_reset/token/:token' component={PasswordResetToken}/>
       <Route path='/password_reset' component={PasswordReset}/>
     </Switch>
   </main>

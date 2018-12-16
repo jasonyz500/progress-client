@@ -11,10 +11,10 @@ const CONFIG = {
   }
 };
 
-class PasswordReset extends Component {
+class PasswordResetToken extends Component {
 
-  handleSubmit({ email: { value }}) {
-    axios.post(`${ROOT_URL}/auth/reset_password`, { email: value }, CONFIG)
+  handleSubmit({ password: { value }}) {
+    axios.post(`${ROOT_URL}/auth/reset_password_token`, { password: value, token: this.props.match.params.token }, CONFIG)
       .then((resp) => {
         this.props.history.replace('/password_reset/done');
       });
@@ -29,11 +29,11 @@ class PasswordReset extends Component {
       <div>
         <TextField
           id={field.input.name}
-          placeholder="Email Address"
+          type="password"
           {...field.input}
           value={field.input.value.value || ''}
         />
-        <Text size="xs">{touched ? error : ''}</Text>
+        <Text size="sm" color="red">{touched ? error : ''}</Text>
       </div>
     );
   }
@@ -42,18 +42,23 @@ class PasswordReset extends Component {
     const { handleSubmit } = this.props;
     return (
       <Box>
-        <Box paddingY={2}><Heading size="sm">Password reset</Heading></Box>
-        <Box paddingY={2}><Text>Forgotten your password? Enter your account's email address below, 
-        and we'll email you instructions for setting a new one.</Text></Box>
+        <Box paddingY={2}><Heading size="sm">Reset Your Password</Heading></Box>
+        <Box paddingY={2}><Text>Please enter a new password to reset your login credentials.</Text></Box>
         <form onSubmit={handleSubmit(this.handleSubmit.bind(this))}>
-          <Box paddingY={2}>
+          <Box paddingY={1}>
             <Field
-              name="email"
+              name="password"
+              component={this.renderField}
+            />
+          </Box>
+          <Box marginBottom={2}>
+            <Field
+              name="confirmPassword"
               component={this.renderField}
             />
           </Box>
           <Button
-            text="Send email"
+            text="Submit"
             color="red"
             type="submit"
             inline
@@ -64,8 +69,17 @@ class PasswordReset extends Component {
   }
 }
 
+function validate({ password, confirmPassword }) {
+  const errors = {};
+  if (password && confirmPassword && password.value !== confirmPassword.value) {
+    errors.confirmPassword = "Error: new password and confirm new password don't match.";
+  }
+  return errors;
+}
+
 export default reduxForm({
-  form: 'requestPasswordReset'
+  validate,
+  form: 'resetPasswordForm'
 })(
-  connect()(PasswordReset)
+  connect()(PasswordResetToken)
 );
