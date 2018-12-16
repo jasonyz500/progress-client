@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
 import { Box, Button, Column, Divider, IconButton, Label, Text, TextField } from 'gestalt';
+import { editPassword } from '../../actions';
 
 class EditPassword extends Component {
   constructor(props) {
@@ -24,7 +25,9 @@ class EditPassword extends Component {
   }
 
   handleEditPassword(data) {
-    console.log(data);
+    this.props.editPassword(data.currentPassword.value, data.newPassword.value, (res) => {
+      console.log(res);
+    });
   }
 
   renderField(field) {
@@ -166,6 +169,15 @@ function mapStateToProps({ user }) {
 
 function validate(values) {
   const errors = {};
+  if (!values.currentPassword) {
+    errors.currentPassword = 'Please enter your current password.';
+  }
+  if (!values.newPassword) {
+    errors.newPassword = 'Please enter a new password.';
+  }
+  if (values.newPassword && values.confirmNewPassword && values.newPassword.value !== values.confirmNewPassword.value) {
+    errors.confirmNewPassword = "New password and confirm new password don't match.";
+  }
   return errors;
 }
 
@@ -173,5 +185,5 @@ export default reduxForm({
   validate,
   form: 'changePasswordForm'
 })(
-  connect(mapStateToProps)(EditPassword)
+  connect(mapStateToProps, { editPassword })(EditPassword)
 );
