@@ -3,7 +3,7 @@ import { SubmissionError } from 'redux-form';
 import { ROOT_URL, getConfig } from './utils';
 
 export const GET_PROFILE = 'get_profile';
-export const edit_PASSWORD = 'edit_password';
+export const EDIT_PASSWORD = 'edit_password';
 
 export function getProfile() {
   const request = axios.get(`${ROOT_URL}/users/profile`, getConfig());
@@ -12,6 +12,10 @@ export function getProfile() {
     type: GET_PROFILE,
     payload: request
   }
+}
+
+export function newUser() {
+  
 }
 
 export function editPassword(currentPassword, newPassword, callback) {
@@ -24,7 +28,7 @@ export function editPassword(currentPassword, newPassword, callback) {
                        });
 
   return {
-    type: edit_PASSWORD,
+    type: EDIT_PASSWORD,
     payload: request
   }
 }

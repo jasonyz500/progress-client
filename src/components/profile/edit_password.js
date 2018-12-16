@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { Field, reduxForm } from 'redux-form';
 import { Box, Button, Column, Divider, IconButton, Label, Text, TextField } from 'gestalt';
 import { editPassword } from '../../actions';
@@ -132,11 +133,13 @@ class EditPassword extends Component {
             />
             <Divider />
             <Box display="flex" direction="row" marginTop={2}>
-              <Button
-                color="white"
-                text="Forgot Password?"
-                inline
-              />
+              <Link to="/password_reset">
+                <Button
+                  color="white"
+                  text="Forgot Password?"
+                  inline
+                />
+              </Link>
               <Box flex="grow"></Box>
               <Box marginRight={1}>
                 <Button
