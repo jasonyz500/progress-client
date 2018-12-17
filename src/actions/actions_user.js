@@ -22,10 +22,7 @@ export function editPassword(currentPassword, newPassword, callback) {
   const url = `${ROOT_URL}/auth/change_password`;
   const request = axios.post(url, { currentPassword, newPassword }, getConfig())
                        .then((resp) => callback(resp))
-                       .catch((err) => {
-                         console.log(err);
-                         throw new SubmissionError( {currentPassword: 'Incorrect Password', _error: 'Failed!' });
-                       });
+                       .catch((err) => alert('Failed to change password. Please verify your current password and try again.'));
 
   return {
     type: EDIT_PASSWORD,

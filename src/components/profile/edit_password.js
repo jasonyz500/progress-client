@@ -27,7 +27,7 @@ class EditPassword extends Component {
 
   handleEditPassword(data) {
     this.props.editPassword(data.currentPassword.value, data.newPassword.value, (res) => {
-      console.log(res);
+      alert('Successfully changed password.');
     });
   }
 
