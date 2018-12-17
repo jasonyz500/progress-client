@@ -15,8 +15,9 @@ class PasswordResetToken extends Component {
 
   handleSubmit({ password: { value }}) {
     axios.post(`${ROOT_URL}/auth/reset_password_token`, { password: value, token: this.props.match.params.token }, CONFIG)
-      .then((resp) => {
-        this.props.history.replace('/password_reset/done');
+      .then(() => {
+        alert('Successfully changed password!');
+        this.props.history.push('/');
       });
   }
 

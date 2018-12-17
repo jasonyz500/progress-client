@@ -16,7 +16,7 @@ class PasswordReset extends Component {
   handleSubmit({ email: { value }}) {
     axios.post(`${ROOT_URL}/auth/reset_password`, { email: value }, CONFIG)
       .then((resp) => {
-        this.props.history.replace('/password_reset/done');
+        this.props.history.push('/password_reset/done');
       });
   }
 
