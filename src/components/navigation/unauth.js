@@ -41,13 +41,13 @@ class UnauthNavigation extends Component {
         <Navbar.Form pullRight>
           <FormGroup>
             <FormControl
-              id="email"
+              id="navEmail"
               type="text"
               placeholder="Email"
               onChange={this.handleChange}
             />
             <FormControl
-              id="password"
+              id="navPassword"
               type="password"
               placeholder="Password"
               onChange={this.handleChange} 

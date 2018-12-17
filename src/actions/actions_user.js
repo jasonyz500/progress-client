@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { SubmissionError } from 'redux-form';
+// import { SubmissionError } from 'redux-form';
 import { ROOT_URL, getConfig } from './utils';
 
 export const GET_PROFILE = 'get_profile';
@@ -12,10 +12,6 @@ export function getProfile() {
     type: GET_PROFILE,
     payload: request
   }
-}
-
-export function newUser() {
-  
 }
 
 export function editPassword(currentPassword, newPassword, callback) {

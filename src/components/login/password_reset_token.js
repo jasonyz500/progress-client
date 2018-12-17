@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Field, reduxForm, SubmissionError } from 'redux-form';
+import { Field, reduxForm } from 'redux-form';
 import { Box, Button, Heading, Text, TextField } from 'gestalt';
 import axios from 'axios';
 import { ROOT_URL } from '../../actions/utils';

@@ -13,17 +13,33 @@ export default class AuthService {
     try {
       const request = await axios.post(`${ROOT_URL}/auth/login`, { email, password }, CONFIG);
       const authToken = request.data;
-      localStorage.setItem('auth_token', authToken);
-      localStorage.setItem('expires_at', decode(authToken).exp);
+      this.setLocalStorage(authToken);
       return true;
     } catch (error) {
       return false;
     }
   }
 
+  async signup(data) {
+    try {
+      const request = await axios.post(`${ROOT_URL}/users/new`, { data }, CONFIG);
+      const authToken = request.data;
+      this.setLocalStorage(authToken);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  setLocalStorage(authToken) {
+    localStorage.setItem('auth_token', authToken);
+    localStorage.setItem('expires_at', decode(authToken).exp);
+  }
+
   logout() {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('expires_at');
+    localStorage.removeItem('encryption_key');
   }
 
   getProfile() {
