@@ -1,20 +1,13 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom'
-import { Button, FormControl, FormGroup } from 'react-bootstrap';
+import { withRouter, Link } from 'react-router-dom'
+import { Field, reduxForm } from 'redux-form';
+import { Box, Button, Column, Label, Text, TextField } from 'gestalt';
+import _ from 'lodash';
 import AuthService from '../auth-service';
 
 const authService = new AuthService();
 
 class Login extends Component {
-  constructor(props, context) {
-    super(props, context);
-    this.handleChange = this.handleChange.bind(this);
-    this.handleLogin = this.handleLogin.bind(this);
-    this.state = {
-      email_main: '',
-      password_main: ''
-    };
-  }
 
   componentWillMount(){
     if (authService.isLoggedIn()) {
@@ -22,45 +15,88 @@ class Login extends Component {
     }
   }
 
-  async handleLogin() {
-    const email = this.state.email_main;
-    const password = this.state.password_main;
+  async login(values) {
+    const email = _.get(values, 'email.value');
+    const password = _.get(values, 'password.value');
     const res = await authService.login(email, password);
     if(res) {
       this.props.history.replace(this.props.location.pathname);
     } else {
-      this.setState({ error: 'Invalid Credentials. Please try again.' });
+      alert('Invalid Credentials. Please try again.');
     }
   }
 
-  handleChange(e) {
-    this.setState({ [e.target.id]: e.target.value });
+  renderField(field) {
+    // delete the event field, otherwise react logs a warning about event nullification
+    delete field.input.value.event;
+    const { meta: { touched, error } } = field;
+
+    return (
+      <Box paddingY={2} display="flex" alignItems="center">
+        <Column span={4}>
+          <Label htmlFor={field.input.name}>
+            <Text align="left" bold>
+              {field.label}
+            </Text>
+          </Label>
+        </Column>
+        <Column span={8}>
+          <Box display="flex" direction="row">
+            <Box flex="grow">
+              <TextField
+                id={field.input.name}
+                type={field.type || 'text'}
+                {...field.input}
+                value={field.input.value.value || ''}
+              />
+              <Text size="sm" color="red">{touched ? error : ''}</Text>
+            </Box>
+          </Box>
+        </Column>
+      </Box>
+    );
   }
 
   render() {
+    const { handleSubmit, submitting } = this.props;
+
     return (
       <div>
         <h2>Please log in to continue.</h2>
-        <form>
-          <FormGroup>
-            <FormControl
-              id="email_main"
-              type="text"
-              placeholder="Email"
-              onChange={this.handleChange}
+        <form onSubmit={handleSubmit(this.login.bind(this))}>
+          <Field
+            label="Email"
+            name="email"
+            component={this.renderField}
+          />
+          <Field
+            label="Password"
+            name="password"
+            type="password"
+            component={this.renderField}
+          />
+          <Box display="flex" direction="row">
+            <Button
+              text="Login"
+              type="submit"
+              color="red"
+              inline
+              disabled={submitting}
             />
-            <FormControl
-              id="password_main"
-              type="password"
-              placeholder="Password"
-              onChange={this.handleChange} 
-            />
-            <Button onClick={this.handleLogin}>Log In</Button>
-          </FormGroup>
+            <Box paddingX={1}>
+              <Link to="/password_reset">
+                <Button text="Forgot Password?" inline/>
+              </Link>
+            </Box>
+          </Box>
         </form>
       </div>
     );
   }
 }
 
-export default withRouter(Login);
+export default reduxForm({
+  form: 'loginPageForm'
+})(
+  withRouter(Login)
+);

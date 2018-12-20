@@ -67,11 +67,10 @@ class Signup extends Component {
     const payload = {
       email: values.email.value,
       password: values.password.value,
-      useEncryption: values.useEncryption && values.useEncryption.value,
-      encryptionKey: values.encryptionKey && values.encryptionKey.value,
-      encryptionKeyHint: values.encryptionKeyHint && values.encryptionKeyHint.value
+      useEncryption: _.get(values, 'useEncryption.value'),
+      encryptionKeyHint: _.get(values, 'encryptionKeyHint.value')
     };
-    const res = await authService.signup(payload);
+    const res = await authService.signup(payload, _.get(values, 'encryptionKey.value'));
     if (res) {
       this.props.history.push('/');
     } else {

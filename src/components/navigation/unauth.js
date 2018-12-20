@@ -1,36 +1,39 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom'
-import { Button, FormControl, FormGroup, Navbar } from 'react-bootstrap';
+import { Field, reduxForm } from 'redux-form';
+import { Button } from 'gestalt';
+import { FormControl, FormGroup, Navbar } from 'react-bootstrap';
 import AuthService from '../auth-service';
 
 const authService = new AuthService();
 
 class UnauthNavigation extends Component {
-  constructor(props, context) {
-    super(props, context);
-    this.handleChange = this.handleChange.bind(this);
-    this.handleLogin = this.handleLogin.bind(this);
-    this.state = {
-      email: '',
-      password: ''
-    };
-  }
 
-  async handleLogin() {
-    const { email, password } = this.state;
-    const res = await authService.login(email, password);
+  async login({ navEmail, navPassword }) {
+    const res = await authService.login(navEmail, navPassword);
     if(res) {
-      this.props.history.replace('/');
+      this.props.history.push('/');
     } else {
-      this.props.history.replace('/login');
+      this.props.history.push('/login');
     }
   }
 
-  handleChange(e) {
-    this.setState({ [e.target.id]: e.target.value });
+  renderField(field) {
+    // delete the event field, otherwise react logs a warning about event nullification
+    delete field.input.value.event;
+
+    return (
+      <FormControl
+        type={field.type || 'text'}
+        {...field.input}
+        value={field.input.value}
+      />
+    );
   }
 
   render() {
+    const { handleSubmit } = this.props;
+
     return (
       <Navbar>
         <Navbar.Header>
@@ -40,19 +43,24 @@ class UnauthNavigation extends Component {
         </Navbar.Header>
         <Navbar.Form pullRight>
           <FormGroup>
-            <FormControl
-              id="navEmail"
-              type="text"
-              placeholder="Email"
-              onChange={this.handleChange}
+          <form onSubmit={handleSubmit(this.login.bind(this))}>
+            <Field
+              name="navEmail"
+              component={this.renderField}
             />
-            <FormControl
-              id="navPassword"
+            <Field
+              name="navPassword"
               type="password"
-              placeholder="Password"
-              onChange={this.handleChange} 
+              component={this.renderField}
             />
-            <Button type="submit" onClick={this.handleLogin}>Log In</Button>
+            <Button
+              text="Login"
+              type="submit"
+              color="red"
+              inline
+              size="sm"
+            />
+          </form>
           </FormGroup>
         </Navbar.Form>
       </Navbar>
@@ -60,4 +68,8 @@ class UnauthNavigation extends Component {
   }
 }
 
-export default withRouter(UnauthNavigation);
+export default reduxForm({
+  form: 'navbarLoginForm'
+})(
+  withRouter(UnauthNavigation)
+);

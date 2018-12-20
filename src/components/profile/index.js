@@ -3,6 +3,9 @@ import { connect } from 'react-redux';
 import { Box, Button, Column, Divider, Heading } from 'gestalt';
 import { getProfile } from '../../actions';
 import EditPassword from './edit_password';
+import AuthService from '../auth-service';
+
+const authService = new AuthService();
 
 class Profile extends Component {
 
@@ -15,7 +18,7 @@ class Profile extends Component {
   }
 
 	render() {
-    const { user } = this.props;
+    const { user } = authService.getProfile();
 		return (
 			<Box>
 				<Box padding={2}><Heading size="sm">Account Settings</Heading></Box>
