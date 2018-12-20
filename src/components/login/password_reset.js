@@ -39,7 +39,7 @@ class PasswordReset extends Component {
   }
 
   render() {
-    const { handleSubmit } = this.props;
+    const { handleSubmit, pristine, submitting } = this.props;
     return (
       <Box>
         <Box paddingY={2}><Heading size="sm">Password reset</Heading></Box>
@@ -57,6 +57,7 @@ class PasswordReset extends Component {
             color="red"
             type="submit"
             inline
+            disabled={pristine || submitting}
           />
         </form>
       </Box>

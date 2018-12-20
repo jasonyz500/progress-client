@@ -5,7 +5,7 @@ yearly view weekly mood coloring for all circles
 weekly view mouseover for more information
 add calendar (better date selection) to weekly/monthly views
 encryption
-actually send email for pw recovery
+beef up email for pw recovery
 email/slack integrations
 
 bug list

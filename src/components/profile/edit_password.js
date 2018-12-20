@@ -54,7 +54,7 @@ class EditPassword extends Component {
                 {...field.input}
                 value={field.input.value.value || ''}
               />
-              {touched ? error : ''}
+              <Text size="sm" color="red">{touched ? error : ''}</Text>
             </Box>
           </Box>
         </Column>
@@ -64,7 +64,7 @@ class EditPassword extends Component {
 
   render() {
     const { user } = this.state;
-    const { handleSubmit } = this.props; // included in redux-form
+    const { handleSubmit, pristine, submitting } = this.props; // included in redux-form
     return (
       <div>
       <Box paddingY={2} paddingX={4} display="flex" alignItems="center">
@@ -154,6 +154,7 @@ class EditPassword extends Component {
                 type="submit"
                 color="red"
                 inline
+                disabled={pristine || submitting}
               />
             </Box>
           </form>

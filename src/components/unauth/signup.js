@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Field, reduxForm } from 'redux-form';
+import { Field, reduxForm, formValueSelector } from 'redux-form';
 import { Box, Button, Column, Divider, Heading, Label, Switch, Text, TextField } from 'gestalt';
 import AuthService from '../auth-service';
+import _ from 'lodash';
 
 const authService = new AuthService();
 
@@ -35,7 +36,7 @@ class Signup extends Component {
                 {...field.input}
                 value={field.input.value.value || ''}
               />
-              {touched ? error : ''}
+              <Text size="sm" color="red">{touched ? error : ''}</Text>
             </Box>
           </Box>
         </Column>
@@ -63,14 +64,23 @@ class Signup extends Component {
   }
 
   async submit(values) {
-    const res = await authService.signup(values);
+    const payload = {
+      email: values.email.value,
+      password: values.password.value,
+      useEncryption: values.useEncryption && values.useEncryption.value,
+      encryptionKey: values.encryptionKey && values.encryptionKey.value,
+      encryptionKeyHint: values.encryptionKeyHint && values.encryptionKeyHint.value
+    };
+    const res = await authService.signup(payload);
     if (res) {
       this.props.history.push('/');
+    } else {
+      alert('There was an error signing up. You may not be on the whitelist for early access.');
     }
   }
 
   render() {
-    const { handleSubmit } = this.props;
+    const { handleSubmit, isEncryptionEnabled, pristine, submitting } = this.props;
 
     return (
       <form onSubmit={handleSubmit(this.submit.bind(this))}>
@@ -101,11 +111,11 @@ class Signup extends Component {
           <Text>This also means that if you lose your key, we cannot help you recover it, so store it carefully!</Text>
         </Box>
         <Field
-          label="Enable encryption"
+          label="Enable Encryption"
           name="useEncryption"
           component={this.renderSwitch}
         />
-        {<div>
+        {isEncryptionEnabled && isEncryptionEnabled.value && <div>
           <Text>Your key doesn't have to be as strong as your password. We recommend something short, simple, and memorable.</Text>
           <Field
             label="Encryption Key"
@@ -126,6 +136,7 @@ class Signup extends Component {
             type="submit"
             color="red"
             inline
+            disabled={pristine || submitting}
           />
         </Box>
       </form>
@@ -133,8 +144,37 @@ class Signup extends Component {
   }
 }
 
-export default reduxForm({
+function validate(values) {
+  const errors = {};
+  const email = _.get(values, 'email.value');
+  const password = _.get(values, 'password.value');
+  const confirmPassword = _.get(values, 'confirmPassword.value');
+  const useEncryption = _.get(values, 'useEncryption.value');
+  const encryptionKey = _.get(values, 'encryptionKey.value');
+  if (!email) {
+    errors.email = "Email is required.";
+  }
+  if (!password || password.length < 6) {
+    errors.password = "Please choose a strong password of at least 6 characters.";
+  }
+  if (password !== confirmPassword) {
+    errors.confirmPassword = "New password and confirm new password don't match.";
+  }
+  if (useEncryption && !encryptionKey) {
+    errors.encryptionKey = "Encryption key is required if you're using encryption.";
+  }
+  return errors;
+}
+
+const SignupForm = reduxForm({
+  validate,
   form: 'signup'
-})(
-  connect()(Signup)
-);
+})(Signup);
+
+const selector = formValueSelector('signup');
+
+export default connect(
+  state => { 
+    return { isEncryptionEnabled: selector(state, 'useEncryption') }
+  }
+)(SignupForm);
