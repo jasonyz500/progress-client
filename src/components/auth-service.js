@@ -11,7 +11,6 @@ const CONFIG = {
 
 export default class AuthService {
   async login(email, password) {
-    console.log(email, password);
     try {
       const request = await axios.post(`${ROOT_URL}/auth/login`, { email, password }, CONFIG);
       const authToken = request.data;
