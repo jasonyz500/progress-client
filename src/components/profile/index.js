@@ -18,7 +18,7 @@ class Profile extends Component {
   }
 
 	render() {
-    const { user } = authService.getProfile();
+    const { user } = this.props;
 		return (
 			<Box>
 				<Box padding={2}><Heading size="sm">Account Settings</Heading></Box>
