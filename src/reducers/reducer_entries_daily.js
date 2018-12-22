@@ -1,7 +1,9 @@
 import _ from 'lodash';
 import { FETCH_ENTRIES_DAILY, CREATE_ENTRY_DAILY, UPDATE_ENTRY_DAILY } from '../actions';
+import { decrypt } from '../encryption_utils';
 
 export default function(state = {}, action) {
+  const shouldDecrypt = localStorage.getItem('is_encryption_enabled');
   switch (action.type) {
     case FETCH_ENTRIES_DAILY:
       /*
