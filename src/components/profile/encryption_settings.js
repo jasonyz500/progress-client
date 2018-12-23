@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Box, Button, Column, Divider, Heading, Label, Text, TextField } from 'gestalt';
+import { Box, Button, Column, Heading, Label, Text, TextField } from 'gestalt';
 
 class EncryptionSettings extends Component {
 

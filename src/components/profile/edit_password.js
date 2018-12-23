@@ -10,15 +10,11 @@ class EditPassword extends Component {
     super(props);
     this.state = {
       user: {
-        email: ''
+        email: localStorage.getItem('email')
       },
       showEditEmail: false,
       showEditPassword: false
     }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState(prevState => ({ user: nextProps.user }));
   }
 
   toggleEditPassword() {
@@ -167,10 +163,6 @@ class EditPassword extends Component {
   }
 }
 
-function mapStateToProps({ user }) {
-  return { user };
-}
-
 function validate(values) {
   const errors = {};
   if (!values.currentPassword) {
@@ -189,5 +181,5 @@ export default reduxForm({
   validate,
   form: 'changePasswordForm'
 })(
-  connect(mapStateToProps, { editPassword })(EditPassword)
+  connect(null, { editPassword })(EditPassword)
 );

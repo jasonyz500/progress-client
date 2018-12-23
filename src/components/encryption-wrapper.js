@@ -1,24 +1,12 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
-import { Box, Button, Column, Heading, Label, Modal, Spinner, Text, TextField } from 'gestalt';
-import { getProfile } from '../actions';
-import Main from './main';
-import _ from 'lodash';
+import { Box, Button, Column, Label, Modal, Text, TextField } from 'gestalt';
 
 class EncryptionWrapper extends Component {
 
-  componentDidMount() {
-    this.props.getProfile();
-  }
-
   handleSubmit(data) {
-    localStorage.setItem('encryption_key', data.value);
+    localStorage.setItem('encryption_key', data.encryptionKey.value);
     window.location.reload();
-  }
-
-  shouldShow(user) {
-    return user.is_encryption_enabled && !localStorage.getItem('encryption_key');
   }
 
   renderField(field) {
@@ -52,59 +40,43 @@ class EncryptionWrapper extends Component {
   }
 
   render() {
-    const { handleSubmit, user } = this.props;
-    if (_.isEmpty(user)) {
-      return (
-        <div>
-          <Heading size="sm">Loading data...</Heading>
-          <Spinner show={true} accessibilityLabel="Loading" />
-        </div>
-      );
-    }
+    const { handleSubmit } = this.props;
+    const encryptionHint = localStorage.getItem('encryption_hint');
     return (
-      <div>
-        {this.shouldShow(user) &&
-          <Modal
-            accessibilityCloseLabel="close"
-            accessibilityModalLabel="Enter encryption key"
-            heading="Enter Encryption Key"
-            role="alertdialog"
-            size="md"
-          >
-            <Box padding={4}>
-              <Text>We've detected that you enabled encryption on your posts,
-               but we couldn't find your encryption key on this computer. Please re-enter it to decrypt your posts.</Text>
-              <br />
-              {user.encryption_hint &&
-                <Text>Your encryption hint is: <b>{user.encryption_hint}</b></Text>
-              }
-              <form onSubmit={handleSubmit(this.handleSubmit.bind(this))}>
-                <Field
-                  label="Encryption Key"
-                  name="encryptionKey"
-                  component={this.renderField}
-                />
-                <Box display="flex" direction="row">
-                  <Box flex="grow"></Box>
-                  <Button
-                    text="Continue"
-                    type="submit"
-                    color="red"
-                    inline
-                  />
-                </Box>
-              </form>
+      <Modal
+        accessibilityCloseLabel="close"
+        accessibilityModalLabel="Enter encryption key"
+        heading="Enter Encryption Key"
+        role="alertdialog"
+        size="md"
+      >
+        <Box padding={4}>
+          <Text>We've detected that you enabled encryption on your posts,
+           but we couldn't find your encryption key on this computer. Please re-enter it to decrypt your posts.</Text>
+          <br />
+          {encryptionHint &&
+            <Text>Your encryption hint is: <b>{encryptionHint}</b></Text>
+          }
+          <form onSubmit={handleSubmit(this.handleSubmit.bind(this))}>
+            <Field
+              label="Encryption Key"
+              name="encryptionKey"
+              component={this.renderField}
+            />
+            <Box display="flex" direction="row">
+              <Box flex="grow"></Box>
+              <Button
+                text="Continue"
+                type="submit"
+                color="red"
+                inline
+              />
             </Box>
-          </Modal>
-        }
-        {!this.shouldShow(user) && <Main />}
-      </div>
+          </form>
+        </Box>
+      </Modal>
     );
   }
-}
-
-function mapStateToProps({ user }) {
-  return { user };
 }
 
 function validate(data) {
@@ -118,6 +90,4 @@ function validate(data) {
 export default reduxForm({
   validate,
   form: 'encryptionAlertForm'
-})(
-  connect(mapStateToProps, { getProfile })(EncryptionWrapper)
-);
+})(EncryptionWrapper);
