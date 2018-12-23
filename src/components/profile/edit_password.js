@@ -67,7 +67,7 @@ class EditPassword extends Component {
     const { handleSubmit, pristine, submitting } = this.props; // included in redux-form
     return (
       <div>
-      <Box paddingY={2} paddingX={4} display="flex" alignItems="center">
+      <Box paddingY={2} display="flex" alignItems="center">
         <Column span={4}>
           <Label htmlFor="email">
             <Text align="left" bold>
@@ -88,7 +88,7 @@ class EditPassword extends Component {
           </Box>
         </Column>
       </Box>
-      <Box paddingY={2} paddingX={4} display="flex" alignItems="center">
+      <Box paddingY={2} display="flex" alignItems="center">
         <Column span={4}>
           <Label htmlFor="password">
             <Text align="left" bold>

@@ -38,6 +38,7 @@ export default class AuthService {
     localStorage.setItem('email', decoded.email);
     localStorage.setItem('expires_at', decoded.exp);
     localStorage.setItem('is_encryption_enabled', decoded.is_encryption_enabled);
+    localStorage.setItem('encryption_hint', decoded.encryption_hint);
     if (encryptionKey) {
       localStorage.setItem('encryption_key', encryptionKey);
     }
@@ -48,6 +49,7 @@ export default class AuthService {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('expires_at');
     localStorage.removeItem('is_encryption_enabled');
+    localStorage.removeItem('encryption_hint');
     localStorage.removeItem('encryption_key');
   }
 
