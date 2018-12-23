@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Box, Button, Column, Divider, Heading, Text } from 'gestalt';
+import { Box, Button, Divider, Heading, Text } from 'gestalt';
 import { getProfile } from '../../actions';
 import EditPassword from './edit_password';
 
@@ -40,7 +40,7 @@ class Profile extends Component {
                 inline
                 disabled
               />
-              <Text color="red">Sorry, adding encryption to an unencrypted account is still under development. Check back soon!</Text>
+              <Text color="red">Sorry, adding encryption to an existing unencrypted account is still under development. Check back soon!</Text>
             </div>
           )}
           {user.is_encryption_enabled && (

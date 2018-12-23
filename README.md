@@ -1,12 +1,14 @@
 # progress-client
 
 next features
+
 yearly view weekly mood coloring for all circles
 weekly view mouseover for more information
 add calendar (better date selection) to weekly/monthly views
 beef up email for pw recovery
 email/slack integrations
 full plaintext backup + restore from backup (with or without encryption)
+^ also, change encryption keys, simultaneously requiring signout on all logged in sessions to refresh locally stored key
 
 bug list
 

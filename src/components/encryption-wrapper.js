@@ -56,7 +56,7 @@ class EncryptionWrapper extends Component {
     if (_.isEmpty(user)) {
       return (
         <div>
-          <Heading size="sm">Loading user data...</Heading>
+          <Heading size="sm">Loading data...</Heading>
           <Spinner show={true} accessibilityLabel="Loading" />
         </div>
       );

@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const ALGORITHM = 'aes192';
 
 function shouldEncrypt() {
-  return localStorage.getItem('is_encryption_enabled') === 'true';
+  return localStorage.getItem('is_encryption_enabled') === 'true' && localStorage.getItem('encryption_key');
 }
 
 export function encrypt(text) {
