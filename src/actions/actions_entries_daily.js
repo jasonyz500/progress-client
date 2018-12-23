@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { ROOT_URL, getConfig } from './utils';
+import { encryptEntry } from '../encryption_utils';
 
 export const FETCH_ENTRIES_DAILY = 'fetch_entries_daily';
 export const FETCH_ENTRY_DAILY = 'fetch_entry_daily';
@@ -27,6 +28,7 @@ export function fetchEntry(_id) {
 }
 
 export function createEntry(entry, callback) {
+  entry = encryptEntry(entry);
   const request = axios.post(`${ROOT_URL}/entries/daily/new`, entry, getConfig()).then((resp) => callback());
 
   return {
@@ -36,6 +38,7 @@ export function createEntry(entry, callback) {
 }
 
 export function updateEntry(entry, callback) {
+  entry = encryptEntry(entry);
   const request = axios.patch(`${ROOT_URL}/entries/daily/${entry.id}`, entry, getConfig()).then((resp) => callback());
 
   return {

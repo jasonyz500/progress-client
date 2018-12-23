@@ -23,7 +23,7 @@ export default class AuthService {
 
   async signup(data, encryptionKey) {
     try {
-      const request = await axios.post(`${ROOT_URL}/users/new`, { data }, CONFIG);
+      const request = await axios.post(`${ROOT_URL}/users/new`, data, CONFIG);
       const authToken = request.data;
       this.setLocalStorage(authToken, encryptionKey);
       return true;

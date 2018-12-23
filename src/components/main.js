@@ -12,7 +12,7 @@ import PasswordResetDone from './login/password_reset_done';
 import PasswordResetToken from './login/password_reset_token';
 
 const Main = () => ( // todo: add validation for edit/weekly/:weekStr param
-  <main>
+  <div>
     <Switch>
       <Route exact path='/' component={Weekly}/>
       <Route path='/weekly/:weekStr?' component={Weekly}/>
@@ -26,7 +26,7 @@ const Main = () => ( // todo: add validation for edit/weekly/:weekStr param
       <Route path='/password_reset/token/:token' component={PasswordResetToken}/>
       <Route path='/password_reset' component={PasswordReset}/>
     </Switch>
-  </main>
+  </div>
 )
 
 export default Main;

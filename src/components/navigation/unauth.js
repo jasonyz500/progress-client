@@ -25,6 +25,7 @@ class UnauthNavigation extends Component {
     return (
       <FormControl
         type={field.type || 'text'}
+        placeholder={field.label}
         {...field.input}
         value={field.input.value}
       />
@@ -46,10 +47,12 @@ class UnauthNavigation extends Component {
           <form onSubmit={handleSubmit(this.login.bind(this))}>
             <Field
               name="navEmail"
+              label="Email"
               component={this.renderField}
             />
             <Field
               name="navPassword"
+              label="Password"
               type="password"
               component={this.renderField}
             />

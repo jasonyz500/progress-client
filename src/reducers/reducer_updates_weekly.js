@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { FETCH_UPDATES_WEEKLY, POST_UPDATES_WEEKLY } from '../actions';
+import { decrypt } from '../encryption_utils';
 
 export default function(state = {}, action) {
   switch (action.type) {
@@ -24,15 +25,15 @@ export default function(state = {}, action) {
           const update = {
             id: row.updateid,
             date_string: row.date_string,
-            body: row.body,
+            body: decrypt(row.body),
             tags: []
           };
           if (row.tagid && row.tag) {
-            update.tags.push({ id: row.tagid, tag: row.tag });
+            update.tags.push({ id: row.tagid, tag: decrypt(row.tag) });
           }
           updates[row.updateid] = update;
         } else {
-          updates[row.updateid].tags.push({ id: row.tagid, tag: row.tag });
+          updates[row.updateid].tags.push({ id: row.tagid, tag: decrypt(row.tag) });
         }
       }
       const res = {};

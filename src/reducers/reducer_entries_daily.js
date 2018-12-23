@@ -3,7 +3,6 @@ import { FETCH_ENTRIES_DAILY, CREATE_ENTRY_DAILY, UPDATE_ENTRY_DAILY } from '../
 import { decrypt } from '../encryption_utils';
 
 export default function(state = {}, action) {
-  const shouldDecrypt = localStorage.getItem('is_encryption_enabled');
   switch (action.type) {
     case FETCH_ENTRIES_DAILY:
       /*
@@ -32,15 +31,15 @@ export default function(state = {}, action) {
         if (!_.has(updates, row.updateid)) {
           const update = {
             id: row.updateid,
-            body: row.body,
+            body: decrypt(row.body),
             tags: []
           };
           if (row.tagid && row.tag) {
-            update.tags.push({ id: row.tagid, tag: row.tag });
+            update.tags.push({ id: row.tagid, tag: decrypt(row.tag) });
           }
           updates[row.updateid] = update;
         } else {
-          updates[row.updateid].tags.push({ id: row.tagid, tag: row.tag });
+          updates[row.updateid].tags.push({ id: row.tagid, tag: decrypt(row.tag) });
         }
       }
       // next go through rows to get entries and add updates which we just mapped
@@ -52,7 +51,7 @@ export default function(state = {}, action) {
             id: row.entryid,
             date_string: row.date_string, // redundant but useful
             mood_score: row.mood_score,
-            mood_reason: row.mood_reason,
+            mood_reason: decrypt(row.mood_reason),
             updates: {}
           };
         }

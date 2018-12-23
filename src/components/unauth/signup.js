@@ -67,8 +67,8 @@ class Signup extends Component {
     const payload = {
       email: values.email.value,
       password: values.password.value,
-      useEncryption: _.get(values, 'useEncryption.value'),
-      encryptionKeyHint: _.get(values, 'encryptionKeyHint.value')
+      is_encryption_enabled: _.get(values, 'useEncryption.value'),
+      encryption_hint: _.get(values, 'encryptionKeyHint.value')
     };
     const res = await authService.signup(payload, _.get(values, 'encryptionKey.value'));
     if (res) {
@@ -106,7 +106,7 @@ class Signup extends Component {
         <Box marginBottom={4} marginTop={2}>
           <Heading size="xs">Encryption (optional)</Heading>
           <Text>Protect your privacy by encrypting and decrypting your posts in your browser.</Text>
-          <Text>Your encryption key will not be stored in our database, so nobody else can ever read your data.</Text>
+          <Text>Your encryption key will not be stored in our database or transferred across the internet, so nobody else can ever read your data.</Text>
           <Text>This also means that if you lose your key, we cannot help you recover it, so store it carefully!</Text>
         </Box>
         <Field
@@ -131,7 +131,7 @@ class Signup extends Component {
         <Divider />
         <Box marginTop={2}>
           <Button
-            text="Submit"
+            text="Sign Up"
             type="submit"
             color="red"
             inline
