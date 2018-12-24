@@ -18,5 +18,6 @@ add validation to dateStr or weekStr URLs
 make text box expand as you type
 when there are too many tags, the daily calendar view doesn't expand properly
 server-side submit validation doesn't work
+display errors on login from nav bar
 
 consider passing around moment objects instead of strings for dates

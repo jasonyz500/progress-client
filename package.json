@@ -20,7 +20,7 @@
   "bugs": {
     "url": "https://github.com/jasonyz500/progress-client/issues"
   },
-  "homepage": "https://github.com/jasonyz500/progress-client#readme",
+  "homepage": "http://progress-client.herokuapp.com",
   "dependencies": {
     "axios": "^0.18.0",
     "gestalt": "^0.76.1",
