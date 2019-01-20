@@ -5,7 +5,7 @@ import { Box, Divider, Icon, IconButton, Text } from 'gestalt';
 import moment from 'moment';
 import _ from 'lodash';
 import { moodToColorMap } from '../common/constants';
-import { drawTags } from '../common/utils';
+import { drawTags, drawWithNewlines } from '../common/utils';
 import { createEntry, updateEntry, getTags } from '../../actions/';
 import '../common/tags.css';
 
@@ -32,14 +32,20 @@ class DayBox extends Component {
             <Icon key={i} accessibilityLabel="rank" icon="smiley-outline" color="red" />
           ))}
         </Box>
-        <Text>{entry.mood_reason}</Text>
+        <Text>{drawWithNewlines(entry.mood_reason)}</Text>
         <br />
         <Divider />
         <br />
         <Text bold={true}>Project Updates</Text>
         <br />
         {entry.updates.map((update, i) => (
-          <Text key={i} align="left">- {update.body} {drawTags(update.tags)}</Text>
+          <Text key={i} align="left">
+            <b>{i+1}. </b>
+            {drawWithNewlines(update.body)}
+            {drawTags(update.tags)}
+            <br />
+            <br />
+          </Text>
         ))}
       </Box>
     );
@@ -49,7 +55,8 @@ class DayBox extends Component {
     const { dateStr, entry } = this.props;
     if(moment().startOf('day') < moment(dateStr)) {
       return (
-        <Box></Box>
+        <Box>
+        </Box>
       );
     }
     return (

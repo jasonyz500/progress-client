@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Box, Column, Divider, IconButton, Text } from 'gestalt';
 import { Link } from 'react-router-dom';
 import { moodToColorMap } from '../common/constants';
-import { drawTags } from '../common/utils';
+import { drawTags, drawWithNewlines } from '../common/utils';
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -52,8 +52,14 @@ class WeeklyCalendar extends Component {
             </Box>
             <Divider />
             <Box paddingX={1} paddingY={2}>
-              {_.map(weekly_updates[week[0].format('YYYY-MM-DD')], update => (
-                <Text key={update.body} align="left">- {update.body} {drawTags(update.tags)}</Text>
+              {_.map(weekly_updates[week[0].format('YYYY-MM-DD')], (update, i) => (
+                <Text key={i} align="left">
+                  <b>{i+1}. </b>
+                  {drawWithNewlines(update.body)}
+                  {drawTags(update.tags)}
+                  <br />
+                  <br />
+                </Text>
               ))}
             </Box>
           </Box>

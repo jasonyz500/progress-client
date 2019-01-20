@@ -1,4 +1,6 @@
+import React from 'react';
 import moment from 'moment';
+import _ from 'lodash';
 
 export function getDisplayTitle(weekStr) {
   const start = moment(weekStr);
@@ -13,4 +15,13 @@ export function drawTags(tags) {
     return '[No Tags]';
   }
   return `[${tags.map(tag => (tag.tag)).join(', ')}]`;
+}
+
+export function drawWithNewlines(text) {
+  const rows = text.split('\n');
+  return _.map(rows, (row, i) => (
+    <span key={i}>
+      {row}<br />
+    </span>
+  ));
 }

@@ -29,7 +29,6 @@ class EditWeeklyUpdates extends Component {
   }
 
   drawUpdate(update, idx) {
-    console.log('update', update);
     const tags = _.map(update.tags, tag => ({ text: tag.tag, id: tag.tag }));
     return (
       <Box key={idx}>
