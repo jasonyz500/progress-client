@@ -18,6 +18,9 @@ export function drawTags(tags) {
 }
 
 export function drawWithNewlines(text) {
+  if(!text) {
+    return null;
+  }
   const rows = text.split('\n');
   return _.map(rows, (row, i) => (
     <span key={i}>

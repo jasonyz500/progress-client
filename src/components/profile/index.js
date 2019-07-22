@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Box, Divider, Heading } from 'gestalt';
 import EditPassword from './edit_password';
 import EncryptionSettings from './encryption_settings';
+import SlackIntegration from './slack_integration';
 
 class Profile extends Component {
 
@@ -15,6 +16,8 @@ class Profile extends Component {
         <EditPassword />
         <Divider />
         <EncryptionSettings />
+        <Divider />
+        <SlackIntegration />
 			</div>
 		);
 	}
