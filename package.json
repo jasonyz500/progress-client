@@ -22,12 +22,12 @@
   },
   "homepage": "http://progress-client.herokuapp.com",
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.19.0",
     "gestalt": "^0.76.1",
     "history": "^4.7.2",
     "jsonwebtoken": "^8.2.2",
     "jwt-decode": "^2.2.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "moment": "^2.22.2",
     "query-string": "^6.1.0",
     "react": "^16.4.0",
@@ -37,11 +37,11 @@
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.3.1",
     "react-scripts": "^3.0.1",
-    "react-tag-input": "^5.2.2",
+    "react-tag-input": "^6.4.0",
     "redux": "^4.0.0",
     "redux-form": "^7.3.0",
     "redux-promise": "^0.6.0",
-    "serve": "^10.1.1"
+    "serve": "^11.1.0"
   },
   "browserslist": [
     ">0.2%",
