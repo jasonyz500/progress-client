@@ -4,6 +4,7 @@ import { ROOT_URL, getConfig } from './utils';
 
 export const GET_PROFILE = 'get_profile';
 export const EDIT_PASSWORD = 'edit_password';
+export const ADD_SLACK_IDS = 'add_slack_ids';
 
 export function getProfile() {
   const request = axios.get(`${ROOT_URL}/users/profile`, getConfig());
@@ -22,6 +23,17 @@ export function editPassword(currentPassword, newPassword, callback) {
 
   return {
     type: EDIT_PASSWORD,
+    payload: request
+  }
+}
+
+export function addSlackIds(userId, teamId, callback) {
+  const url = `${ROOT_URL}/slack/ids`;
+  const request = axios.post(url, { userId, teamId }, getConfig())
+                       .then((resp) => callback(resp));
+
+  return {
+    type: ADD_SLACK_IDS,
     payload: request
   }
 }
