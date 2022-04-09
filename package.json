@@ -28,7 +28,7 @@
     "jsonwebtoken": "^8.2.2",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.15",
-    "moment": "^2.22.2",
+    "moment": "^2.29.2",
     "query-string": "^6.1.0",
     "react": "^16.4.0",
     "react-bootstrap": "^0.32.1",
